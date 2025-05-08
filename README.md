@@ -13,7 +13,7 @@ Brief summary of the project:
 
 ## 🧑‍💻 Authors
 
-- Name 1 - B6507787 - [GitHub](https://github.com/Khaichiaro)
+- Pongsakorn In-on - B6507787 - [GitHub](https://github.com/Khaichiaro)
 - Kamonchanok Thonnondaeng - B6526405 - [GitHub](https://github.com/Kamonchanok-tnd)
 - Suphutsorn Soisuwan - B6526436 - [GitHub](https://github.com/suphutsorn)
   
