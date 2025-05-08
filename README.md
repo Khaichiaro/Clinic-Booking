@@ -2,7 +2,7 @@
 [![Open in Visual Studio Code](https://classroom.github.com/assets/open-in-vscode-2e0aaae1b6195c2367325f4f02e2d04e9abb55f0b24a779b69b11b9e10269abc.svg)](https://classroom.github.com/online_ide?assignment_repo_id=19462044&assignment_repo_type=AssignmentRepo)
 # 🎓 Appointment Booking for Clinic
 
-_A short, descriptive title for your student project._
+_An Online Appointment Booking System for Improving Service Efficiency in Medical Clinics._
 
 ## 📝 Project Description
 
@@ -16,11 +16,13 @@ Brief summary of the project:
 - Pongsakorn In-on - B6507787 - [GitHub](https://github.com/Khaichiaro)
 - Kamonchanok Thonnondaeng - B6526405 - [GitHub](https://github.com/Kamonchanok-tnd)
 - Suphutsorn Soisuwan - B6526436 - [GitHub](https://github.com/suphutsorn)
+
   
 > Course: ENG23 3074 Serverless and Cloud Architectures  
 > Instructor: Dr. Nuntawut Kaoungku  
 > University: Suranaree University of Technology  
 > Semester/Term: 3/2567
+
 
 ## 🏗️ System Architecture
 
