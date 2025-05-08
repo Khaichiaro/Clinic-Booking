@@ -27,8 +27,9 @@ _It is a web-based application that allows patients to book, manage, and cancel 
 > Instructor: Dr. Nuntawut Kaoungku  
 > University: Suranaree University of Technology  
 > Semester/Term: 3/2567
-<br><br>
 
+
+<br><br><br><br>
 ## 🏗️ System Architecture
 
 Below is the high-level architecture of the project:
