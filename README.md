@@ -15,11 +15,12 @@ Brief summary of the project:
 
 - Name 1 - Student ID - [GitHub](https://github.com/username)
 - Name 2 - Student ID - [GitHub](https://github.com/username)
+- Kamonchanok Thonnondaeng - B6526405 - [GitHub](https://github.com/Kamonchanok-tnd)
 
-> Course: Course Name  
+> Course: ENG23 3074 Serverless and Cloud Architectures  
 > Instructor: Instructor Name  
-> University: Your University Name  
-> Semester/Term: Fall 2025
+> University: Suranaree University of Technology  
+> Semester/Term: 3/2567
 
 ## 🏗️ System Architecture
 
