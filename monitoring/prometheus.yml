@@ -1,0 +1,15 @@
+global:
+  scrape_interval: 15s
+
+scrape_configs:
+  - job_name: 'user-service'
+    static_configs:
+      - targets: ['user-service:5000']
+
+  - job_name: 'doctor-service'
+    static_configs:
+      - targets: ['doctor-service:5001']
+
+  - job_name: 'appointment-service'
+    static_configs:
+      - targets: ['appointment-service:5002']
