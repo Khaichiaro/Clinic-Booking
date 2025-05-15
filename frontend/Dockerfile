@@ -1,14 +1,18 @@
-FROM node:18 as build
+# Use Bun base image
+FROM oven/bun:1.0-alpine
+
+# Set working directory
 WORKDIR /app
+
+# Copy package.json and install dependencies
+COPY package.json package-lock.json ./
+RUN bun install
+
+# Copy the rest of the app
 COPY . .
 
-# ติดตั้ง dependencies ที่ขาดก่อน
-RUN npm install react-router-dom && \
-    npm install --save-dev @types/react-router-dom
+# Expose port 5173 for Vite
+EXPOSE 5173
 
-# ติดตั้ง dependencies ที่เหลือ และ build
-RUN npm install && npm run build
-
-FROM nginx:alpine
-COPY --from=build /app/dist /usr/share/nginx/html
-EXPOSE 80
+# Start Vite dev server with Bun
+CMD ["bun", "run", "dev", "--", "--host", "0.0.0.0"]
