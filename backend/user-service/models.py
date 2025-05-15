@@ -8,7 +8,7 @@ class Gender(db.Model):
     gender = db.Column(db.String(10))
 
 class User(db.Model):
-    __tablename__ = 'User'
+    __tablename__ = 'user'  # lowercase
     id = db.Column(db.Integer, primary_key=True)
     first_name = db.Column(db.String(100))
     last_name = db.Column(db.String(100))
@@ -16,3 +16,4 @@ class User(db.Model):
     email = db.Column(db.String(100))
     phone_number = db.Column(db.String(20))
     gender_id = db.Column(db.Integer, db.ForeignKey('gender.id'))
+    gender = db.relationship('Gender', backref='users')

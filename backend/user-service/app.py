@@ -2,8 +2,10 @@
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
+from models import db, User, Gender
+
 import os
-from models import db, Doctor, Gender  # 👉 import จาก model.py
+
 
 app = Flask(__name__)
 CORS(app)
@@ -36,10 +38,9 @@ def create_user():
     db.session.commit()
     return jsonify({"message": "User created", "id": user.id}), 201
 
-@app.before_first_request
-def create_tables():
-    db.create_all()
 
 if __name__ == '__main__':
+    with app.app_context():
+        db.create_all()   # สร้างตารางตอนเริ่ม app
     app.run(host='0.0.0.0', port=5000)
 

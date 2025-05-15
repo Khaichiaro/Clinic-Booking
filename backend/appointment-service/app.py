@@ -1,7 +1,8 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-from model import db, Appointment, Status, ServiceType
+from models import db, Appointment, Status, ServiceType
 import os
+from datetime import datetime
 
 app = Flask(__name__)
 CORS(app)
@@ -30,22 +31,48 @@ def get_appointments():
 
 @app.route('/api/appointments', methods=['POST'])
 def create_appointment():
-    data = request.json
-    appointment = Appointment(
-        appointment_time=data.get('appointment_time'),
-        appointment_date=data.get('appointment_date'),
-        user_id=data.get('user_id'),
-        servicetype_id=data.get('servicetype_id'),
-        status_id=data.get('status_id'),
-        doctor_id=data.get('doctor_id')
-    )
-    db.session.add(appointment)
-    db.session.commit()
-    return jsonify({"message": "Appointment created", "id": appointment.id}), 201
+    try:
+        data = request.get_json(force=True)
 
-@app.before_first_request
-def create_tables():
-    db.create_all()
+        # แปลง appointment_time โดยตัด 'Z' ท้าย string ออกถ้ามี
+        iso_time = data.get('appointment_time')
+        if iso_time.endswith('Z'):
+            iso_time = iso_time[:-1]
+        appointment_time = datetime.fromisoformat(iso_time)
+
+        # แปลง appointment_date (เป็นวันที่ ไม่ใช่ datetime)
+        iso_date = data.get('appointment_date')
+        appointment_date = datetime.fromisoformat(iso_date).date()
+
+        appointment = Appointment(
+            appointment_time=appointment_time,
+            appointment_date=appointment_date,
+            user_id=data.get('user_id'),
+            servicetype_id=data.get('servicetype_id'),
+            status_id=data.get('status_id'),
+            doctor_id=data.get('doctor_id')
+        )
+        db.session.add(appointment)
+        db.session.commit()
+        return jsonify({"message": "Appointment created", "id": appointment.id}), 201
+    except Exception as e:
+        print("Error creating appointment:", e)
+        return jsonify({"error": str(e)}), 500
+
+@app.route('/api/service_types', methods=['GET'])
+def get_service_types():
+    service_types = ServiceType.query.all()
+    result = []
+    for s in service_types:
+        result.append({
+            'id': s.id,
+            'service_type': s.service_type
+        })
+    return jsonify(result)
 
 if __name__ == '__main__':
+    with app.app_context():
+        print("Creating tables...")
+        db.create_all()
+        print("Tables created.")
     app.run(host='0.0.0.0', port=5002)

@@ -8,16 +8,16 @@ class Status(db.Model):
     status = db.Column(db.String(50))
 
 class ServiceType(db.Model):
-    __tablename__ = 'ServiceType'
+    __tablename__ = 'service_type'
     id = db.Column(db.Integer, primary_key=True)
-    ServiceType = db.Column(db.String(100))
+    service_type = db.Column(db.String(100))
 
 class Appointment(db.Model):
-    __tablename__ = 'Appointment'
+    __tablename__ = 'appointment'
     id = db.Column(db.Integer, primary_key=True)
     appointment_time = db.Column(db.DateTime)
     appointment_date = db.Column(db.Date)
-    user_id = db.Column(db.Integer)       # อ้างอิง user_id จาก User service (ถ้าแยก microservices)
-    servicetype_id = db.Column(db.Integer, db.ForeignKey('ServiceType.id'))
+    user_id = db.Column(db.Integer)
+    servicetype_id = db.Column(db.Integer, db.ForeignKey('service_type.id'))
     status_id = db.Column(db.Integer, db.ForeignKey('status.id'))
-    doctor_id = db.Column(db.Integer)     # อ้างอิง doctor_id จาก Doctor service
+    doctor_id = db.Column(db.Integer)

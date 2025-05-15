@@ -1,18 +1,59 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import dayjs from "dayjs";
 import "./Appointment.css";
 
 export default function AppointmentPage() {
   const [currentMonth, setCurrentMonth] = useState(dayjs());
-  const navigate = useNavigate(); // <<== เพิ่มตรงนี้
+  const navigate = useNavigate();
+
   const [selectedDate, setSelectedDate] = useState(dayjs().format("YYYY-MM-DD"));
   const [selectedTime, setSelectedTime] = useState("13:00 - 14:00");
-  const [selectedService, setSelectedService] = useState("ขูดหินปูน");
+  const [selectedService, setSelectedService] = useState("");
   const [step, setStep] = useState<"datetime" | "service" | "overview">("datetime");
 
-  const services = ["ขูดหินปูน","ถอนฟัน", "อุดฟัน", "จัดฟัน","ฟอกสีฟัน","รักษารากฟัน","วีเนียร์ฟัน","ครอบฟัน"];
-  const times = ["11:00 - 12:00", "13:00 - 14:00", "14:00 - 15:00","15:00 - 16:00","17:00 - 18:00","18:00 - 19:00","19:00 - 20:00"];
+  const [services, setServices] = useState<string[]>([]);
+
+  useEffect(() => {
+    fetch("http://localhost:5002/api/service_types")
+      .then((res) => {
+        if (!res.ok) throw new Error("Failed to fetch services");
+        return res.json();
+      })
+      .then((data) => {
+        const serviceNames = data.map((item: any) => item.service_type);
+        setServices(serviceNames);
+        if (serviceNames.length > 0 && !selectedService) {
+          setSelectedService(serviceNames[0]);
+        }
+      })
+      .catch((err) => {
+        console.error(err);
+        // fallback กรณี fetch ล้มเหลว
+        const fallbackServices = [
+          "ขูดหินปูน",
+          "ถอนฟัน",
+          "อุดฟัน",
+          "จัดฟัน",
+          "ฟอกสีฟัน",
+          "รักษารากฟัน",
+          "วีเนียร์ฟัน",
+          "ครอบฟัน",
+        ];
+        setServices(fallbackServices);
+        if (!selectedService) setSelectedService(fallbackServices[0]);
+      });
+  }, []);
+
+  const times = [
+    "11:00 - 12:00",
+    "13:00 - 14:00",
+    "14:00 - 15:00",
+    "15:00 - 16:00",
+    "17:00 - 18:00",
+    "18:00 - 19:00",
+    "19:00 - 20:00",
+  ];
 
   const daysInMonth = currentMonth.daysInMonth();
   const firstDay = currentMonth.startOf("month").day();
@@ -108,8 +149,12 @@ export default function AppointmentPage() {
                 ))}
               </div>
               <div className="nav-buttons">
-                <button className="btn-back" onClick={() => setStep("datetime")}>&larr; Back</button>
-                <button className="btn-continue" onClick={() => setStep("overview")}>CONTINUE</button>
+                <button className="btn-back" onClick={() => setStep("datetime")}>
+                  &larr; Back
+                </button>
+                <button className="btn-continue" onClick={() => setStep("overview")}>
+                  CONTINUE
+                </button>
               </div>
             </>
           )}
@@ -118,27 +163,73 @@ export default function AppointmentPage() {
             <>
               <div className="section-label">Review your appointment</div>
               <div className="overview-box">
-                <p><strong>Date:</strong> {dayjs(selectedDate).format("dddd, MMMM D, YYYY")}</p>
-                <p><strong>Time:</strong> {selectedTime}</p>
-                <p><strong>Service:</strong> {selectedService}</p>
+                <p>
+                  <strong>Date:</strong> {dayjs(selectedDate).format("dddd, MMMM D, YYYY")}
+                </p>
+                <p>
+                  <strong>Time:</strong> {selectedTime}
+                </p>
+                <p>
+                  <strong>Service:</strong> {selectedService}
+                </p>
               </div>
               <div className="nav-buttons">
-                <button className="btn-back" onClick={() => setStep("service")}>&larr; Back</button>
-                <button
-                className="btn-confirm"
-                onClick={() => {
-                    alert("Appointment confirmed!");
-                    navigate("/my-appointments", {
-                        state: {
-                          date: selectedDate,
-                          time: selectedTime,
-                          service: selectedService,
-                        },
-                      });
-                }}
-                >
-                CONFIRM
+                <button className="btn-back" onClick={() => setStep("service")}>
+                  &larr; Back
                 </button>
+                <button
+  className="btn-confirm"
+  onClick={async () => {
+    try {
+      // เตรียมข้อมูลวันที่และเวลา
+      const appointmentDate = selectedDate; // "YYYY-MM-DD"
+      const appointmentTimeStart = selectedTime.split(" - ")[0]; // เช่น "13:00"
+      // รวมเป็น ISO string เช่น "2025-05-15T13:00:00"
+      const appointmentDateTimeISO = new Date(`${appointmentDate}T${appointmentTimeStart}:00`).toISOString();
+
+      // เตรียม payload ส่ง API
+      const payload = {
+        appointment_date: appointmentDate,
+        appointment_time: appointmentDateTimeISO,
+        user_id: 1, // กำหนด user_id จริงตามระบบคุณ
+        servicetype_id: services.indexOf(selectedService) + 1, // สมมติ id เรียงตามลำดับ (ถ้ามี id จริงให้แก้ตามนั้น)
+        status_id: 1, // กำหนดสถานะเริ่มต้น เช่น Pending = 1
+        doctor_id: null, // ถ้าเลือกหมอได้ ให้ส่ง id หมอจริง
+      };
+
+      // ส่ง POST request
+      const response = await fetch("http://localhost:5002/api/appointments", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) {
+        const err = await response.json();
+        throw new Error(err.error || "Failed to create appointment");
+      }
+
+      // ได้ผลลัพธ์สำเร็จ
+      alert("Appointment confirmed!");
+
+      // navigate ไปหน้าถัดไป พร้อมส่ง state
+      navigate("/my-appointments", {
+        state: {
+          date: appointmentDate,
+          time: selectedTime,
+          service: selectedService,
+        },
+      });
+    } catch (error: any) {
+      alert("Error: " + error.message);
+    }
+  }}
+>
+  CONFIRM
+</button>
+
               </div>
             </>
           )}
