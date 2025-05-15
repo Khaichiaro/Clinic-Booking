@@ -33,6 +33,48 @@ def create_doctor():
     db.session.commit()
     return jsonify({ "message": "Doctor created", "id": doctor.id }), 201
 
+@app.route('/api/init_genders', methods=['POST'])
+def init_genders():
+    try:
+        default_genders = [
+            {"id": 1, "gender": "ชาย"},
+            {"id": 2, "gender": "หญิง"},
+            {"id": 3, "gender": "อื่น ๆ"},
+        ]
+
+        added = 0
+        for g in default_genders:
+            exists = Gender.query.get(g["id"])
+            if not exists:
+                new_gender = Gender(id=g["id"], gender=g["gender"])
+                db.session.add(new_gender)
+                added += 1
+        db.session.commit()
+        return jsonify({"message": f"{added} genders added or already exist."}), 201
+    except Exception as e:
+        print("Error initializing genders:", e)
+        return jsonify({"error": str(e)}), 500
+
+@app.route('/api/doctors', methods=['POST'])
+def add_doctor():
+    try:
+        data = request.get_json(force=True)
+        doctor = Doctor(
+            first_name=data.get('first_name'),
+            last_name=data.get('last_name'),
+            phone_number=data.get('phone_number'),
+            email=data.get('email'),
+            password=data.get('password'),  # ควร hash password ในระบบจริง
+            gender_id=data.get('gender_id')
+        )
+        db.session.add(doctor)
+        db.session.commit()
+        return jsonify({"message": "Doctor added", "id": doctor.id}), 201
+    except Exception as e:
+        print("Error adding doctor:", e)
+        return jsonify({"error": str(e)}), 500
+
+
 # @app.before_first_request
 # def create_tables():
 #     db.create_all()

@@ -177,32 +177,26 @@ export default function AppointmentPage() {
                 <button className="btn-back" onClick={() => setStep("service")}>
                   &larr; Back
                 </button>
-                <button
+               <button
   className="btn-confirm"
   onClick={async () => {
     try {
-      // เตรียมข้อมูลวันที่และเวลา
-      const appointmentDate = selectedDate; // "YYYY-MM-DD"
-      const appointmentTimeStart = selectedTime.split(" - ")[0]; // เช่น "13:00"
-      // รวมเป็น ISO string เช่น "2025-05-15T13:00:00"
+      const appointmentDate = selectedDate;
+      const appointmentTimeStart = selectedTime.split(" - ")[0];
       const appointmentDateTimeISO = new Date(`${appointmentDate}T${appointmentTimeStart}:00`).toISOString();
 
-      // เตรียม payload ส่ง API
       const payload = {
         appointment_date: appointmentDate,
         appointment_time: appointmentDateTimeISO,
-        user_id: 1, // กำหนด user_id จริงตามระบบคุณ
-        servicetype_id: services.indexOf(selectedService) + 1, // สมมติ id เรียงตามลำดับ (ถ้ามี id จริงให้แก้ตามนั้น)
-        status_id: 1, // กำหนดสถานะเริ่มต้น เช่น Pending = 1
-        doctor_id: null, // ถ้าเลือกหมอได้ ให้ส่ง id หมอจริง
+        user_id: 1, // แก้ตามระบบจริง
+        servicetype_id: services.indexOf(selectedService) + 1, // แก้ตาม id จริง
+        status_id: 1,
+        doctor_id: null,
       };
 
-      // ส่ง POST request
       const response = await fetch("http://localhost:5002/api/appointments", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
 
@@ -211,12 +205,14 @@ export default function AppointmentPage() {
         throw new Error(err.error || "Failed to create appointment");
       }
 
-      // ได้ผลลัพธ์สำเร็จ
+      const data = await response.json();
+      const appointmentId = data.id; // รับ id จาก backend
+
       alert("Appointment confirmed!");
 
-      // navigate ไปหน้าถัดไป พร้อมส่ง state
       navigate("/my-appointments", {
         state: {
+          id: appointmentId,  // ส่ง id ด้วย
           date: appointmentDate,
           time: selectedTime,
           service: selectedService,
@@ -229,6 +225,7 @@ export default function AppointmentPage() {
 >
   CONFIRM
 </button>
+
 
               </div>
             </>

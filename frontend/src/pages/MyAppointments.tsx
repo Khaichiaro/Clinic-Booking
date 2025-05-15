@@ -7,11 +7,27 @@ export default function MyAppointmentsPage() {
   const initialAppointment = location.state;
   const [appointment, setAppointment] = useState(initialAppointment);
 
-  const handleCancel = () => {
+  const handleCancel = async () => {
     const confirmed = window.confirm("คุณต้องการยกเลิกการจองนี้ใช่หรือไม่?");
-    if (confirmed) {
-      setAppointment(null);
+    if (!confirmed) return;
+
+    try {
+      // เรียก PATCH API อัพเดต status_id = 3 (ยกเลิก)
+      const response = await fetch(`http://localhost:5002/api/appointments/${appointment.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status_id: 3 }),
+      });
+
+      if (!response.ok) {
+        const err = await response.json();
+        throw new Error(err.error || "ไม่สามารถยกเลิกการจองได้");
+      }
+
       alert("การจองถูกยกเลิกแล้ว");
+      setAppointment(null); // ล้างข้อมูลแสดงว่าไม่มีการจอง
+    } catch (error: any) {
+      alert("เกิดข้อผิดพลาด: " + error.message);
     }
   };
 
@@ -21,16 +37,15 @@ export default function MyAppointmentsPage() {
         <h2 className="title">My Appointments</h2>
         {appointment ? (
           <div className="appointment-card1">
-  <div className="appointment-details1">
-    <p><strong>Date:</strong> {appointment.date}</p>
-    <p><strong>Time:</strong> {appointment.time}</p>
-    <p><strong>Service:</strong> {appointment.service}</p>
-  </div>
-  <button className="btn-cancel1" onClick={handleCancel}>
-    ยกเลิกการจอง
-  </button>
-</div>
-
+            <div className="appointment-details1">
+              <p><strong>Date:</strong> {appointment.date}</p>
+              <p><strong>Time:</strong> {appointment.time}</p>
+              <p><strong>Service:</strong> {appointment.service}</p>
+            </div>
+            <button className="btn-cancel1" onClick={handleCancel}>
+              ยกเลิกการจอง
+            </button>
+          </div>
         ) : (
           <p>ไม่มีการจองล่าสุด</p>
         )}

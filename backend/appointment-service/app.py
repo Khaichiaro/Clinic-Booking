@@ -70,6 +70,16 @@ def get_service_types():
         })
     return jsonify(result)
 
+@app.route('/api/appointments/<int:appointment_id>', methods=['PATCH'])
+def update_appointment_status(appointment_id):
+    data = request.get_json(force=True)
+    appointment = Appointment.query.get_or_404(appointment_id)
+    if 'status_id' in data:
+        appointment.status_id = data['status_id']
+    db.session.commit()
+    return jsonify({"message": "Appointment updated"})
+
+
 if __name__ == '__main__':
     with app.app_context():
         print("Creating tables...")
