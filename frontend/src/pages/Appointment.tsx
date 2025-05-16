@@ -76,6 +76,7 @@ export default function AppointmentPage() {
   const handleNextMonth = () => setCurrentMonth(currentMonth.add(1, "month"));
 
   return (
+    <div className="docapp">
     <div className="appointment-wrapper">
       <div className="appointment-container">
         <div className="appointment-content">
@@ -232,6 +233,7 @@ export default function AppointmentPage() {
           )}
         </div>
       </div>
+    </div>
     </div>
   );
 }

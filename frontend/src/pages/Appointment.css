@@ -1,4 +1,4 @@
-.appointment-wrapper {
+  .docapp .appointment-wrapper {
     height: 100vh;
     background: linear-gradient(to bottom right, #f1f5f9, #e2e8f0);
     display: flex;
@@ -7,7 +7,7 @@
     padding: 1rem;
   }
   
-  .appointment-container {
+  .docapp .appointment-container {
     width: 100%;
     max-width: 28rem;
     border-radius: 30px;
@@ -15,11 +15,11 @@
     box-shadow: 0 10px 20px rgba(0,0,0,0.1);
   }
   
-  .appointment-content {
+  .docapp .appointment-content {
     padding: 1.5rem;
   }
   
-  .title {
+  .docapp .title {
     text-align: center;
     font-size: 1.25rem;
     font-weight: bold;
@@ -27,7 +27,7 @@
     margin-bottom: 0.5rem;
   }
   
-  .steps {
+  .docapp .steps {
     display: flex;
     justify-content: space-around;
     font-size: 0.875rem;
@@ -36,11 +36,11 @@
     margin-bottom: 1.5rem;
   }
   
-  .steps .active {
+  .docapp .steps .active {
     color: #2563eb;
   }
   
-  .month-nav {
+  .docapp .month-nav {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -50,7 +50,7 @@
     margin-bottom: 0.5rem;
   }
   
-  .calendar-header {
+  .docapp .calendar-header {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
     text-align: center;
@@ -59,14 +59,14 @@
     margin-bottom: 0.25rem;
   }
   
-  .calendar-grid {
+  .docapp .calendar-grid {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
     gap: 0.5rem;
     margin-bottom: 1.5rem;
   }
   
-  .calendar-cell {
+  .docapp .calendar-cell {
     width: 2.5rem;
     height: 2.5rem;
     font-size: 0.875rem;
@@ -79,30 +79,30 @@
     transition: all 0.2s;
   }
   
-  .calendar-cell:hover {
+  .docapp .calendar-cell:hover {
     background-color: #eff6ff;
   }
   
-  .selected-date {
+  .docapp .selected-date {
     background-color: #dbeafe;
     color: #1d4ed8;
   }
   
-  .section-label {
+ .docapp .section-label {
     font-size: 0.875rem;
     font-weight: 600;
     color: #4b5563;
     margin-bottom: 0.5rem;
   }
   
-  .times-scroll {
+ .docapp .times-scroll {
     display: flex;
     gap: 0.75rem;
     margin-bottom: 1.5rem;
     overflow-x: auto;
   }
   
-  .time-button {
+ .docapp .time-button {
     border: 1px solid #d1d5db;
     background-color: white;
     color: #2563eb;
@@ -114,17 +114,17 @@
     transition: all 0.2s;
   }
   
-  .time-button:hover {
+ .docapp .time-button:hover {
     background-color: #dbeafe;
   }
   
-  .selected-time {
+ .docapp .selected-time {
     background-color: #bfdbfe;
     color: #1e40af;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
   }
   
-  .btn-continue,
+ .docapp .btn-continue,
   .btn-confirm {
     width: 100%;
     border-radius: 9999px;
@@ -137,19 +137,19 @@
     transition: brightness 0.2s;
   }
   
-  .btn-continue:hover,
+ .docapp .btn-continue:hover,
   .btn-confirm:hover {
     filter: brightness(110%);
   }
   
-  .service-list {
+ .docapp .service-list {
     display: flex;
     flex-direction: column;
     gap: 0.75rem;
     margin-bottom: 1.5rem;
   }
   
-  .service-button {
+ .docapp .service-button {
     padding: 0.75rem 1rem;
     font-size: 0.875rem;
     font-weight: 500;
@@ -161,28 +161,28 @@
     transition: background-color 0.2s;
   }
   
-  .service-button:hover {
+ .docapp .service-button:hover {
     background-color: #dbeafe;
   }
   
-  .selected-service {
+.docapp  .selected-service {
     background-color: #bfdbfe;
     color: #1e40af;
   }
   
-  .nav-buttons {
+ .docapp .nav-buttons {
     display: flex;
     justify-content: space-between;
     align-items: center;
   }
   
-  .btn-back {
+ .docapp .btn-back {
     font-size: 0.875rem;
     color: #2563eb;
     text-decoration: underline;
   }
   
-  .overview-box {
+ .docapp .overview-box {
     background-color: #f9fafb;
     padding: 1rem;
     border-radius: 0.5rem;
@@ -191,7 +191,7 @@
     margin-bottom: 1.5rem;
   }
   
-  .empty {
+ .docapp .empty {
     pointer-events: none;
   }
   

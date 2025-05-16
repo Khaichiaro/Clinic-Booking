@@ -1,0 +1,159 @@
+.container {
+  display: flex;
+  gap: 150px;
+  background-color: #c1efff;
+  max-height: 100%;
+  padding: 30px;
+  font-family: Arial, sans-serif;
+  max-width: 100%;     /* กำหนด max-width */
+  margin: 0 auto;       /* จัดกึ่งกลาง */
+  flex-wrap: wrap;      /* รองรับการ wrap บนจอเล็ก */
+  justify-content: center; /* จัดกึ่งกลางถ้า wrap */
+}
+
+.leftCard {
+  background-color: white;
+  border-radius: 16px;
+  padding: 30px;
+  width: 450px;
+  text-align: center;
+  flex-shrink: 0;
+  margin-bottom: 58px; /* เว้นระยะด้านล่างเวลาจอเล็ก */
+}
+
+.rightCard {
+  background-color: white;
+  border-radius: 16px;
+  padding: 30px;
+  width: 450px;
+  flex-shrink: 0;
+  margin-bottom: 58px; /* เว้นระยะด้านล่างเวลาจอเล็ก */
+
+}
+
+
+.doctorImage {
+  width: 300px;
+  margin-bottom: 20px;
+}
+
+.doctorName {
+  margin: 10px 0;
+}
+
+.contactText {
+  font-weight: bold;
+  font-size: 18px;
+}
+
+.buttonGroup {
+  display: flex;
+  justify-content: center;
+  gap: 80px;
+  margin-top: 50px;
+}
+
+.btn {
+  background-color: black;
+  color: white;
+  border-radius: 20px;
+  padding: 10px 20px;
+  border: none;
+  font-weight: bold;
+  font-family: monospace;
+  cursor: pointer;
+  min-width: 110px;
+}
+
+.title {
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.dateSelector {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 30px;
+  align-items: center;
+}
+
+.arrowBtn {
+  font-weight: bold;
+  font-size: 20px;
+  border-radius: 6px;
+  padding: 2px 12px;
+  border: 1px solid #394867;
+  background-color: white;
+  cursor: pointer;
+  user-select: none;
+}
+
+.dateBox {
+  cursor: pointer;
+  border: 1px solid #394867;
+  border-radius: 8px;
+  padding: 8px 14px;
+  background-color: transparent;
+  color: #394867;
+  font-weight: normal;
+  text-align: center;
+  width: 60px;
+  user-select: none;
+  transition: all 0.3s ease;
+}
+
+.dateBoxActive {
+  background-color: #394867;
+  color: white;
+  font-weight: bold;
+}
+
+.dayText {
+  font-size: 14px;
+  font-weight: normal;
+}
+
+.monthText {
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.upcomingText {
+  color: #7d7d7d;
+  margin-bottom: 12px;
+}
+
+.appointmentCard {
+  display: flex;
+  align-items: center;
+  border-radius: 12px;
+  padding: 8px 16px;
+  margin-bottom: 12px;
+  gap: 12px;
+}
+
+.appointmentTime {
+  font-weight: bold;
+  width: 80px;
+}
+
+.appointmentInfo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.avatarImg {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+}
+
+.patientName {
+  font-weight: bold;
+}
+
+.treatmentType {
+  color: #9b9b9b;
+}
+
