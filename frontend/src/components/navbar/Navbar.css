@@ -1,0 +1,25 @@
+.navbar {
+  background-color: #cbf8ff;
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.nav-logo {
+  height: 60px;
+}
+
+.nav-button {
+  background-color: #1e2b30;
+  color: white;
+  border: none;
+  padding: 0.6rem 1rem;
+  font-weight: bold;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.nav-button:hover {
+  background-color: #2f3f44;
+}

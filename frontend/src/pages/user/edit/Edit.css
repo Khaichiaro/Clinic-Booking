@@ -1,0 +1,41 @@
+.edit-page {
+  background-color: #d4faff;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.edit-page h2 {
+  font-size: 1.8rem;
+  color: #1d3e45;
+  margin-bottom: 1.5rem;
+}
+
+.edit-page input,
+.edit-page select {
+  width: 300px;
+  padding: 10px;
+  margin-bottom: 1rem;
+  border: 1px solid #bdf4ff;
+  border-radius: 6px;
+  font-size: 1rem;
+}
+
+.edit-page button {
+  background-color: #1d3e45;
+  color: white;
+  font-weight: bold;
+  padding: 10px 20px;
+  width: 300px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.edit-page button:hover {
+  background-color: #123038;
+}

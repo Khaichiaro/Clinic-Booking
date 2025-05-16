@@ -3,14 +3,22 @@ from flask_cors import CORS
 from models import db, Doctor, Gender  # 👉 import จาก model.py
 import os
 
+from datetime import datetime
+from prometheus_client import make_wsgi_app
+from werkzeug.middleware.dispatcher import DispatcherMiddleware
+
 app = Flask(__name__)
 CORS(app)
 
 # Database config
-app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv("DATABASE_URL", "postgresql://myuser:mypassword@db:5432/mydb")
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv("DATABASE_URL", "postgresql://admin:1234@db:5432/mydb")
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+db.init_app(app)
 
-db.init_app(app)  # 👉 initialize ที่นี่
+# Metrics endpoint for Prometheus
+app.wsgi_app = DispatcherMiddleware(app.wsgi_app, {
+    '/metrics': make_wsgi_app()
+})
 
 # Routes
 @app.route('/api/doctors', methods=['GET'])
@@ -84,5 +92,5 @@ if __name__ == '__main__':
         print("Creating tables...")
         db.create_all()
         print("Tables created.")
-    app.run(host='0.0.0.0', port=5001)
+    app.run(host='0.0.0.0', port=5002)
 
