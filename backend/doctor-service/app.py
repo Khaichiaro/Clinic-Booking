@@ -51,5 +51,6 @@ if __name__ == '__main__':
         print("Creating tables...")
         db.create_all()
         print("Tables created.")
-    app.run(host='0.0.0.0', port=5001)
-
+        print("📋 Registered routes:")
+        print(app.url_map)  # ✅ แสดง route ทั้งหมด
+    app.run(host='0.0.0.0', port=5011)
