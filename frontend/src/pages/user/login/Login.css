@@ -34,16 +34,6 @@
   border-radius: 6px;
 }
 
-.login-card button {
-  background-color: #1d3e45;
-  color: white;
-  font-weight: bold;
-  width: 100%;
-  padding: 10px;
-  border-radius: 6px;
-  border: none;
-}
-
 .login-card p {
   margin-top: 15px;
 }
@@ -51,4 +41,18 @@
 .login-card a {
   color: #1d3e45;
   font-weight: bold;
+}
+
+.login-button {
+  background-color: #1d3e45;
+  color: white;
+  font-weight: bold;
+  width: 100%;
+  padding: 10px;
+  transition: all 0.3s ease-in-out;
+}
+
+.login-button:hover {
+  background-color: #2f3f44;
+  transform: scale(1.05);
 }

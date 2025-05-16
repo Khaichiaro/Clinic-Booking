@@ -34,7 +34,7 @@
   border-radius: 6px;
 }
 
-.register-card button {
+.register-button {
   background-color: #1d3e45;
   color: white;
   font-weight: bold;
@@ -43,4 +43,12 @@
   border-radius: 6px;
   border: none;
   margin-top: 10px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.register-button:hover {
+  background-color: #2f3f44;
+  transform: scale(1.05);
+  transition: all 0.3s ease;
 }

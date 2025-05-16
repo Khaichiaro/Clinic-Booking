@@ -4,7 +4,7 @@ import logo3 from "../../assets/logo3.svg";
 
 export default function Navbar() {
   const navigate = useNavigate();
-  const token = localStorage.getItem("token");
+  const token = localStorage.getItem("userId");
 
   const handleLogout = () => {
     localStorage.clear();

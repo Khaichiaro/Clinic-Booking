@@ -23,19 +23,51 @@
 .info-card h2 {
   font-weight: bold;
   margin-bottom: 10px;
+  color: #1d3e45;
 }
 
 .info-card p {
   margin: 5px 0;
+  color: #333;
 }
 
-.info-card button {
-  margin-top: 20px;
+
+
+.info-button {
   background-color: #1d3e45;
   color: white;
-  padding: 10px;
+  font-weight: bold;
   width: 100%;
+  padding: 10px;
   border-radius: 6px;
   border: none;
+  margin-top: 20px;
+  margin-bottom: 9px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.info-button:hover {
+  background-color: #2f3f44;
+  transform: scale(1.05);
+  transition: all 0.3s ease;
+}
+
+.info-back-button {
+  background-color: #c0392b;
+  color: white;
   font-weight: bold;
+  width: 100%;
+  padding: 10px;
+  border-radius: 6px;
+  border: none;
+  margin-top: 0px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.info-back-button:hover {
+  background-color: #e74c3c;
+  transform: scale(1.05);
+  transition: all 0.3s ease;
 }
