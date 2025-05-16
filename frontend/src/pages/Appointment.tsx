@@ -10,9 +10,11 @@ export default function AppointmentPage() {
   const [selectedDate, setSelectedDate] = useState(dayjs().format("YYYY-MM-DD"));
   const [selectedTime, setSelectedTime] = useState("13:00 - 14:00");
   const [selectedService, setSelectedService] = useState("");
-  const [step, setStep] = useState<"datetime" | "service" | "overview">("datetime");
+  const [selectedDoctor, setSelectedDoctor] = useState("");
+  const [step, setStep] = useState<"datetime" | "service" | "doctor" | "overview">("datetime");
 
   const [services, setServices] = useState<string[]>([]);
+  const [doctors, setDoctors] = useState<string[]>([]);
 
   useEffect(() => {
     fetch("http://localhost:5002/api/service_types")
@@ -29,7 +31,6 @@ export default function AppointmentPage() {
       })
       .catch((err) => {
         console.error(err);
-        // fallback กรณี fetch ล้มเหลว
         const fallbackServices = [
           "ขูดหินปูน",
           "ถอนฟัน",
@@ -42,6 +43,27 @@ export default function AppointmentPage() {
         ];
         setServices(fallbackServices);
         if (!selectedService) setSelectedService(fallbackServices[0]);
+      });
+  }, []);
+
+  useEffect(() => {
+    fetch("http://localhost:5011/api/doctors")
+      .then((res) => {
+        if (!res.ok) throw new Error("Failed to fetch doctors");
+        return res.json();
+      })
+      .then((data) => {
+        const doctorNames = data.map((doc: any) => `${doc.first_name} ${doc.last_name}`);
+        setDoctors(doctorNames);
+        if (doctorNames.length > 0 && !selectedDoctor) {
+          setSelectedDoctor(doctorNames[0]);
+        }
+      })
+      .catch((err) => {
+        console.error(err);
+        const fallbackDoctors = ["นพ. สมชาย", "นพ. สมหญิง", "นพ. อภิวัฒน์"];
+        setDoctors(fallbackDoctors);
+        if (!selectedDoctor) setSelectedDoctor(fallbackDoctors[0]);
       });
   }, []);
 
@@ -77,163 +99,183 @@ export default function AppointmentPage() {
 
   return (
     <div className="docapp">
-    <div className="appointment-wrapper">
-      <div className="appointment-container">
-        <div className="appointment-content">
-          <div className="title">New appointment</div>
-          <div className="steps">
-            <span className={step === "datetime" ? "active" : ""}>Date & Time</span>
-            <span className={step === "service" ? "active" : ""}>Service</span>
-            <span className={step === "overview" ? "active" : ""}>Overview</span>
-          </div>
+      <div className="appointment-wrapper">
+        <div className="appointment-container">
+          <div className="appointment-content">
+            <div className="title">New appointment</div>
+            <div className="steps">
+              <span className={step === "datetime" ? "active" : ""}>Date & Time</span>
+              <span className={step === "service" ? "active" : ""}>Service</span>
+              <span className={step === "doctor" ? "active" : ""}>Doctor</span>
+              <span className={step === "overview" ? "active" : ""}>Overview</span>
+            </div>
 
-          {step === "datetime" && (
-            <>
-              <div className="month-nav">
-                <button onClick={handlePrevMonth}>&lt;</button>
-                <span>{currentMonth.format("MMMM")}</span>
-                <button onClick={handleNextMonth}>&gt;</button>
-              </div>
-              <div className="calendar-header">
-                {["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"].map((d) => (
-                  <span key={d}>{d}</span>
-                ))}
-              </div>
-              <div className="calendar-grid">
-                {calendarDays.map((date, idx) => (
-                  <button
-                    key={idx}
-                    className={`calendar-cell ${
-                      date
-                        ? selectedDate === date.format("YYYY-MM-DD")
-                          ? "selected-date"
-                          : ""
-                        : "empty"
-                    }`}
-                    onClick={() => date && setSelectedDate(date.format("YYYY-MM-DD"))}
-                    disabled={!date}
-                  >
-                    {date ? date.date() : ""}
-                  </button>
-                ))}
-              </div>
-              <div className="section-label">Available times</div>
-              <div className="times-scroll">
-                {times.map((time) => (
-                  <button
-                    key={time}
-                    className={`time-button ${selectedTime === time ? "selected-time" : ""}`}
-                    onClick={() => setSelectedTime(time)}
-                  >
-                    {time}
-                  </button>
-                ))}
-              </div>
-              <button className="btn-continue" onClick={() => setStep("service")}>
-                CONTINUE
-              </button>
-            </>
-          )}
-
-          {step === "service" && (
-            <>
-              <div className="section-label">Select a service</div>
-              <div className="service-list">
-                {services.map((service) => (
-                  <button
-                    key={service}
-                    className={`service-button ${selectedService === service ? "selected-service" : ""}`}
-                    onClick={() => setSelectedService(service)}
-                  >
-                    {service}
-                  </button>
-                ))}
-              </div>
-              <div className="nav-buttons">
-                <button className="btn-back" onClick={() => setStep("datetime")}>
-                  &larr; Back
-                </button>
-                <button className="btn-continue" onClick={() => setStep("overview")}>
+            {step === "datetime" && (
+              <>
+                <div className="month-nav">
+                  <button onClick={handlePrevMonth}>&lt;</button>
+                  <span>{currentMonth.format("MMMM")}</span>
+                  <button onClick={handleNextMonth}>&gt;</button>
+                </div>
+                <div className="calendar-header">
+                  {["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"].map((d) => (
+                    <span key={d}>{d}</span>
+                  ))}
+                </div>
+                <div className="calendar-grid">
+                  {calendarDays.map((date, idx) => (
+                    <button
+                      key={idx}
+                      className={`calendar-cell ${
+                        date
+                          ? selectedDate === date.format("YYYY-MM-DD")
+                            ? "selected-date"
+                            : ""
+                          : "empty"
+                      }`}
+                      onClick={() => date && setSelectedDate(date.format("YYYY-MM-DD"))}
+                      disabled={!date}
+                    >
+                      {date ? date.date() : ""}
+                    </button>
+                  ))}
+                </div>
+                <div className="section-label">Available times</div>
+                <div className="times-scroll">
+                  {times.map((time) => (
+                    <button
+                      key={time}
+                      className={`time-button ${selectedTime === time ? "selected-time" : ""}`}
+                      onClick={() => setSelectedTime(time)}
+                    >
+                      {time}
+                    </button>
+                  ))}
+                </div>
+                <button className="btn-continue" onClick={() => setStep("service")}>
                   CONTINUE
                 </button>
-              </div>
-            </>
-          )}
+              </>
+            )}
 
-          {step === "overview" && (
-            <>
-              <div className="section-label">Review your appointment</div>
-              <div className="overview-box">
-                <p>
-                  <strong>Date:</strong> {dayjs(selectedDate).format("dddd, MMMM D, YYYY")}
-                </p>
-                <p>
-                  <strong>Time:</strong> {selectedTime}
-                </p>
-                <p>
-                  <strong>Service:</strong> {selectedService}
-                </p>
-              </div>
-              <div className="nav-buttons">
-                <button className="btn-back" onClick={() => setStep("service")}>
-                  &larr; Back
-                </button>
-               <button
-  className="btn-confirm"
-  onClick={async () => {
-    try {
-      const appointmentDate = selectedDate;
-      const appointmentTimeStart = selectedTime.split(" - ")[0];
-      const appointmentDateTimeISO = new Date(`${appointmentDate}T${appointmentTimeStart}:00`).toISOString();
+            {step === "service" && (
+              <>
+                <div className="section-label">Select a service</div>
+                <div className="service-list">
+                  {services.map((service) => (
+                    <button
+                      key={service}
+                      className={`service-button ${selectedService === service ? "selected-service" : ""}`}
+                      onClick={() => setSelectedService(service)}
+                    >
+                      {service}
+                    </button>
+                  ))}
+                </div>
+                <div className="nav-buttons">
+                  <button className="btn-back" onClick={() => setStep("datetime")}>
+                    &larr; Back
+                  </button>
+                  <button className="btn-continue" onClick={() => setStep("doctor")}>
+                    CONTINUE
+                  </button>
+                </div>
+              </>
+            )}
 
-      const payload = {
-        appointment_date: appointmentDate,
-        appointment_time: appointmentDateTimeISO,
-        user_id: 1, // แก้ตามระบบจริง
-        servicetype_id: services.indexOf(selectedService) + 1, // แก้ตาม id จริง
-        status_id: 1,
-        doctor_id: null,
-      };
+            {step === "doctor" && (
+              <>
+                <div className="section-label">Select a doctor</div>
+                <div className="service-list">
+                  {doctors.map((doctor) => (
+                    <button
+                      key={doctor}
+                      className={`service-button ${selectedDoctor === doctor ? "selected-service" : ""}`}
+                      onClick={() => setSelectedDoctor(doctor)}
+                    >
+                      {doctor}
+                    </button>
+                  ))}
+                </div>
+                <div className="nav-buttons">
+                  <button className="btn-back" onClick={() => setStep("service")}>
+                    &larr; Back
+                  </button>
+                  <button className="btn-continue" onClick={() => setStep("overview")}>
+                    CONTINUE
+                  </button>
+                </div>
+              </>
+            )}
 
-      const response = await fetch("http://localhost:5002/api/appointments", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
+            {step === "overview" && (
+              <>
+                <div className="section-label">Review your appointment</div>
+                <div className="overview-box">
+                  <p><strong>Date:</strong> {dayjs(selectedDate).format("dddd, MMMM D, YYYY")}</p>
+                  <p><strong>Time:</strong> {selectedTime}</p>
+                  <p><strong>Service:</strong> {selectedService}</p>
+                  <p><strong>Doctor:</strong> {selectedDoctor}</p>
+                </div>
+                <div className="nav-buttons">
+                  <button className="btn-back" onClick={() => setStep("doctor")}>
+                    &larr; Back
+                  </button>
+                  <button
+                    className="btn-confirm"
+                    onClick={async () => {
+                      try {
+                        const appointmentDate = selectedDate;
+                        const appointmentTimeStart = selectedTime.split(" - ")[0];
+                        const appointmentDateTimeISO = new Date(`${appointmentDate}T${appointmentTimeStart}:00`).toISOString();
 
-      if (!response.ok) {
-        const err = await response.json();
-        throw new Error(err.error || "Failed to create appointment");
-      }
+                        const payload = {
+                          appointment_date: appointmentDate,
+                          appointment_time: appointmentDateTimeISO,
+                          user_id: 1, // ปรับตามระบบจริง
+                          servicetype_id: services.indexOf(selectedService) + 1,
+                          status_id: 1,
+                          doctor_id: doctors.indexOf(selectedDoctor) + 1, // หรือใช้ id จริงถ้ามี
+                        };
 
-      const data = await response.json();
-      const appointmentId = data.id; // รับ id จาก backend
+                        const response = await fetch("http://localhost:5002/api/appointments", {
+                          method: "POST",
+                          headers: { "Content-Type": "application/json" },
+                          body: JSON.stringify(payload),
+                        });
 
-      alert("Appointment confirmed!");
+                        if (!response.ok) {
+                          const err = await response.json();
+                          throw new Error(err.error || "Failed to create appointment");
+                        }
 
-      navigate("/my-appointments", {
-        state: {
-          id: appointmentId,  // ส่ง id ด้วย
-          date: appointmentDate,
-          time: selectedTime,
-          service: selectedService,
-        },
-      });
-    } catch (error: any) {
-      alert("Error: " + error.message);
-    }
-  }}
->
-  CONFIRM
-</button>
+                        const data = await response.json();
+                        const appointmentId = data.id;
 
+                        alert("Appointment confirmed!");
 
-              </div>
-            </>
-          )}
+                        navigate("/my-appointments", {
+                          state: {
+                            id: appointmentId,
+                            date: appointmentDate,
+                            time: selectedTime,
+                            service: selectedService,
+                            doctor: selectedDoctor,
+                          },
+                        });
+                      } catch (error: any) {
+                        alert("Error: " + error.message);
+                      }
+                    }}
+                  >
+                    CONFIRM
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
         </div>
       </div>
-    </div>
     </div>
   );
 }

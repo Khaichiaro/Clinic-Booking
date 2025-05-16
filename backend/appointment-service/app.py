@@ -1,6 +1,11 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from models import db, Appointment, Status, ServiceType
+import requests
+
+
+
+
 import os
 from datetime import datetime
 
@@ -18,16 +23,33 @@ def get_appointments():
     appointments = Appointment.query.all()
     result = []
     for a in appointments:
+        service = ServiceType.query.get(a.servicetype_id)
+
+        # ✅ ดึง doctor จาก API ของ doctor-service
+        doctor = None
+        doctor_name = "ยังไม่ระบุ"
+        if a.doctor_id:
+            try:
+                res = requests.get(f"http://doctor-service:5011/api/doctors/{a.doctor_id}")
+                if res.ok:
+                    doctor = res.json()
+                    doctor_name = f"{doctor['first_name']} {doctor['last_name']}"
+            except Exception as e:
+                print(f"❌ Error fetching doctor {a.doctor_id}:", e)
+
         result.append({
             'id': a.id,
             'appointment_time': a.appointment_time.isoformat() if a.appointment_time else None,
             'appointment_date': a.appointment_date.isoformat() if a.appointment_date else None,
             'user_id': a.user_id,
             'servicetype_id': a.servicetype_id,
+            'service_name': service.service_type if service else None,
             'status_id': a.status_id,
-            'doctor_id': a.doctor_id
+            'doctor_id': a.doctor_id,
+            'doctor_name': doctor_name
         })
     return jsonify(result)
+
 
 @app.route('/api/appointments', methods=['POST'])
 def create_appointment():

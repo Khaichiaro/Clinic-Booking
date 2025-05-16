@@ -12,9 +12,9 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db.init_app(app)  # 👉 initialize ที่นี่
 
-# Routes
 @app.route('/api/doctors', methods=['GET'])
 def get_doctors():
+    print("📢 /api/doctors was called")
     doctors = Doctor.query.all()
     return jsonify([{ 'id': d.id, 'first_name': d.first_name, 'last_name': d.last_name, 'email': d.email } for d in doctors])
 
@@ -33,47 +33,6 @@ def create_doctor():
     db.session.commit()
     return jsonify({ "message": "Doctor created", "id": doctor.id }), 201
 
-@app.route('/api/init_genders', methods=['POST'])
-def init_genders():
-    try:
-        default_genders = [
-            {"id": 1, "gender": "ชาย"},
-            {"id": 2, "gender": "หญิง"},
-            {"id": 3, "gender": "อื่น ๆ"},
-        ]
-
-        added = 0
-        for g in default_genders:
-            exists = Gender.query.get(g["id"])
-            if not exists:
-                new_gender = Gender(id=g["id"], gender=g["gender"])
-                db.session.add(new_gender)
-                added += 1
-        db.session.commit()
-        return jsonify({"message": f"{added} genders added or already exist."}), 201
-    except Exception as e:
-        print("Error initializing genders:", e)
-        return jsonify({"error": str(e)}), 500
-
-@app.route('/api/doctors', methods=['POST'])
-def add_doctor():
-    try:
-        data = request.get_json(force=True)
-        doctor = Doctor(
-            first_name=data.get('first_name'),
-            last_name=data.get('last_name'),
-            phone_number=data.get('phone_number'),
-            email=data.get('email'),
-            password=data.get('password'),  # ควร hash password ในระบบจริง
-            gender_id=data.get('gender_id')
-        )
-        db.session.add(doctor)
-        db.session.commit()
-        return jsonify({"message": "Doctor added", "id": doctor.id}), 201
-    except Exception as e:
-        print("Error adding doctor:", e)
-        return jsonify({"error": str(e)}), 500
-
 
 # @app.before_first_request
 # def create_tables():
@@ -84,5 +43,6 @@ if __name__ == '__main__':
         print("Creating tables...")
         db.create_all()
         print("Tables created.")
-    app.run(host='0.0.0.0', port=5001)
-
+        print("📋 Registered routes:")
+        print(app.url_map)  # ✅ แสดง route ทั้งหมด
+    app.run(host='0.0.0.0', port=5011)
