@@ -1,0 +1,74 @@
+.home-container {
+  background-color: #cbf8ff;
+  height: 84.5vh;
+  padding: 3rem;
+  position: relative;
+}
+
+/* Disable all cards if not logged in */
+.home-container.disabled {
+  pointer-events: none;
+  opacity: 0.6;
+}
+
+/* Show warning below navbar */
+.home-warning {
+  text-align: center;
+  background-color: #fef4f4;
+  color: #c0392b;
+  padding: 1rem;
+  font-weight: bold;
+}
+
+/* Each card will be absolutely positioned inside .home-container */
+.card {
+  width: 260px;
+  height: 180px;
+  border-radius: 20px;
+  font-size: 1.2rem;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 1rem;
+  cursor: pointer;
+  text-align: center;
+  padding: 1rem;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  position: absolute;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 20px rgba(0, 0, 0, 0.2);
+}
+
+.card.light {
+  background-color: #ffffff;
+  border: 2px solid #e0f7ff;
+  color: #1d3e45;
+  width: 20%;
+  top: 10%;
+  left: 19%;
+}
+
+.card.purple {
+  background-color: #e9e3ff;
+  color: #3c2e84;
+  border: 2px solid #d1c4ff;
+  width: 36%;
+  top: 10%;
+  left: 44%;
+}
+
+.card.dark {
+  background-color: #1e2b30;
+  color: #ffffff;
+  border: 2px solid #141e22;
+  width: 61%;
+  height: 200px;
+  top: 30%;
+  left: 19%;
+}

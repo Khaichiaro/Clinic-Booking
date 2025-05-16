@@ -8,7 +8,7 @@ class Gender(db.Model):
     gender = db.Column(db.String(10))
 
 class User(db.Model):
-    __tablename__ = 'user'  # lowercase
+    __tablename__ = 'user'  
     id = db.Column(db.Integer, primary_key=True)
     first_name = db.Column(db.String(100))
     last_name = db.Column(db.String(100))

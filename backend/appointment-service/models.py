@@ -17,7 +17,7 @@ class Appointment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     appointment_time = db.Column(db.DateTime)
     appointment_date = db.Column(db.Date)
-    user_id = db.Column(db.Integer)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id', ondelete='CASCADE'))
     servicetype_id = db.Column(db.Integer, db.ForeignKey('service_type.id'))
     status_id = db.Column(db.Integer, db.ForeignKey('status.id'))
     doctor_id = db.Column(db.Integer)
