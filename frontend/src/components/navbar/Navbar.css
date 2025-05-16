@@ -18,8 +18,11 @@
   font-weight: bold;
   border-radius: 6px;
   cursor: pointer;
+  transition: all 0.2s;
 }
 
 .nav-button:hover {
   background-color: #2f3f44;
+  transition: all 0.2s;
+  scale: 1.05;
 }

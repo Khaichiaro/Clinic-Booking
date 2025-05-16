@@ -27,11 +27,17 @@ def user_to_dict(user):
     return {
         "id": user.id,
         "password": user.password,
-        "firstname": user.first_name,
-        "lastname": user.last_name,
+        "first_name": user.first_name,
+        "last_name": user.last_name,
         "email": user.email,
-        "phonenumber": user.phone_number,
-        "gender": user.gender_id
+        "phone_number": user.phone_number,
+        "gender_id": user.gender_id
+    }
+
+def gender_to_dict(gender):
+    return {
+        "id": gender.id,
+        "gender": gender.gender
     }
 
 # ------------------------------------ 
@@ -63,7 +69,7 @@ def create_user():
 @app.route("/api/users", methods=["GET"])
 def get_users():
     try:
-        users = User.query.order_by(User.id.desc()).all()
+        users = User.query.order_by(User.id.asc()).all()
         return jsonify({
             "message": "All users",
             "data": [user_to_dict(u) for u in users]
@@ -120,6 +126,21 @@ def delete_user(user_id):
     except Exception as e:
         print("xxx ERROR [DELETE /user/<id>]:", e)
         return jsonify({"message": "Failed to delete user", "data": None, "error": str(e)}), 500
+
+# ------------------------------------
+# [R] Read All Genders
+@app.route("/api/genders", methods=["GET"])
+def get_genders():
+    try:
+        genders = Gender.query.order_by(Gender.id.asc()).all()
+        return jsonify({
+            "message": "All genders",
+            "data": [gender_to_dict(g) for g in genders]
+        })
+    except Exception as e:
+        print("xxx ERROR [GET /genders]:", e)
+        return jsonify({"message": "Failed to get genders", "data": None, "error": str(e)}), 500
+
 
 # ------------------------------------
 if __name__ == '__main__':

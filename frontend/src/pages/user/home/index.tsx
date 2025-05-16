@@ -8,7 +8,8 @@ import Doctor1 from "../../../assets/doctor1.svg";
 
 const Home = () => {
   const navigate = useNavigate();
-  const token = localStorage.getItem("token");
+  const token = localStorage.getItem("userId");
+  console.log("userId", token);
 
   const isLoggedIn = !!token;
 
