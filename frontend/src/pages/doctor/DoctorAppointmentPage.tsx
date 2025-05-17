@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import styles from "./DoctorAppointmentPage.module.css";
 import { useNavigate } from "react-router-dom";
-import doctorImg from "../assets/doctorg.png"; // หมอ
-import pmImg from "../assets/pm.png";         // คนไข้ชาย
-import pgImg from "../assets/pg.png";         // คนไข้หญิง
+import doctorImg from "../../assets/doctorg.png"; // หมอ
+import pmImg from "../../assets/pm.png";         // คนไข้ชาย
+import pgImg from "../../assets/pg.png";         // คนไข้หญิง
 
 type Appointment = {
   time: string;

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import "./AddDoctor.css";
-import doca from "../assets/doca.png";
+import doca from "../../assets/doca.png";
 
 const AddDoctor: React.FC = () => {
   const [form, setForm] = useState({
