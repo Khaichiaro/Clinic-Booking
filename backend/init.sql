@@ -34,6 +34,15 @@ CREATE TABLE doctor (
     gender_id INTEGER REFERENCES gender(id)
 );
 
+-- ตาราง doctor_schedule (เพิ่มใหม่)
+CREATE TABLE doctor_schedule (
+    id SERIAL PRIMARY KEY,
+    doctor_id INTEGER REFERENCES doctor(id) ON DELETE CASCADE,
+    work_date DATE NOT NULL,
+    start_time TIME NOT NULL,
+    end_time TIME NOT NULL
+);
+
 -- ตาราง status
 CREATE TABLE status (
     id SERIAL PRIMARY KEY,
@@ -77,6 +86,19 @@ INSERT INTO "user" (first_name, last_name, password, email, phone_number, gender
 INSERT INTO doctor (first_name, last_name, phone_number, email, password, gender_id) VALUES
 ('Dr. Pong', 'In-on', '0999999999', 'pong@clinic.com', 'securepass', 2),
 ('Dr. John', 'Doe', '0823456789', 'john.doe@clinic.com', '12345678', 1);
+
+-- สมมติเวลาทำงานของหมอคนที่ 1 (Dr. Pong In-on)
+INSERT INTO doctor_schedule (doctor_id, work_date, start_time, end_time) VALUES
+(1, '2025-05-20', '08:00', '12:00'),
+(1, '2025-05-21', '13:00', '17:00'),
+(1, '2025-05-22', '08:00', '12:00');
+
+-- สมมติเวลาทำงานของหมอคนที่ 2 (Dr. John Doe)
+INSERT INTO doctor_schedule (doctor_id, work_date, start_time, end_time) VALUES
+(2, '2025-05-20', '10:00', '14:00'),
+(2, '2025-05-21', '09:00', '12:00'),
+(2, '2025-05-23', '13:00', '18:00');
+
 
 -- status
 INSERT INTO status (status) VALUES

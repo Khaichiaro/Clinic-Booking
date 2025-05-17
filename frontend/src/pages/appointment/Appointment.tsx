@@ -2,28 +2,28 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import dayjs from "dayjs";
 import "./Appointment.css";
-import { fetchServiceTypes } from "../../service/http/appointment";
-import { fetchDoctors } from "../../service/http/doctor";
-import { createAppointment } from "../../service/http/appointment";
+import { fetchServiceTypes, createAppointment } from "../../service/http/appointment";
+import { fetchDoctors, fetchAvailableTimes } from "../../service/http/doctor";
 
 export default function AppointmentPage() {
   const [currentMonth, setCurrentMonth] = useState(dayjs());
   const navigate = useNavigate();
 
   const [selectedDate, setSelectedDate] = useState(dayjs().format("YYYY-MM-DD"));
-  const [selectedTime, setSelectedTime] = useState("13:00 - 14:00");
+  const [selectedTime, setSelectedTime] = useState("");
   const [selectedService, setSelectedService] = useState("");
   const [selectedDoctor, setSelectedDoctor] = useState("");
   const [step, setStep] = useState<"datetime" | "service" | "doctor" | "overview">("datetime");
 
   const [services, setServices] = useState<string[]>([]);
   const [doctors, setDoctors] = useState<string[]>([]);
+  const [availableTimes, setAvailableTimes] = useState<string[]>([]);
 
+  // โหลดบริการ
   useEffect(() => {
     async function loadServices() {
       try {
         const data = await fetchServiceTypes();
-        // สมมติ data เป็น array ของ service objects ที่มี key เป็น service_type
         const serviceNames = data.map((item: any) => item.service_type);
         setServices(serviceNames);
         if (serviceNames.length > 0 && !selectedService) {
@@ -48,34 +48,43 @@ export default function AppointmentPage() {
     loadServices();
   }, []);
 
+  // โหลดหมอ
   useEffect(() => {
-  async function loadDoctors() {
-    try {
-      const data = await fetchDoctors();
-      const doctorNames = data.map((doc: any) => `${doc.first_name} ${doc.last_name}`);
-      setDoctors(doctorNames);
-      if (doctorNames.length > 0 && !selectedDoctor) {
-        setSelectedDoctor(doctorNames[0]);
+    async function loadDoctors() {
+      try {
+        const data = await fetchDoctors();
+        const doctorNames = data.map((doc: any) => `${doc.first_name} ${doc.last_name}`);
+        setDoctors(doctorNames);
+        if (doctorNames.length > 0 && !selectedDoctor) {
+          setSelectedDoctor(doctorNames[0]);
+        }
+      } catch (err) {
+        console.error(err);
+        const fallbackDoctors = ["นพ. สมชาย", "นพ. สมหญิง", "นพ. อภิวัฒน์"];
+        setDoctors(fallbackDoctors);
+        if (!selectedDoctor) setSelectedDoctor(fallbackDoctors[0]);
       }
-    } catch (err) {
-      console.error(err);
-      const fallbackDoctors = ["นพ. สมชาย", "นพ. สมหญิง", "นพ. อภิวัฒน์"];
-      setDoctors(fallbackDoctors);
-      if (!selectedDoctor) setSelectedDoctor(fallbackDoctors[0]);
     }
-  }
-  loadDoctors();
-}, []);
+    loadDoctors();
+  }, []);
 
-  const times = [
-    "11:00 - 12:00",
-    "13:00 - 14:00",
-    "14:00 - 15:00",
-    "15:00 - 16:00",
-    "17:00 - 18:00",
-    "18:00 - 19:00",
-    "19:00 - 20:00",
-  ];
+  // โหลดเวลาว่างหมอเมื่อ step doctor, selectedDoctor หรือ selectedDate เปลี่ยน
+  useEffect(() => {
+    async function loadAvailableTimes() {
+      if (step === "doctor" && selectedDoctor && selectedDate) {
+        try {
+          const doctorId = doctors.indexOf(selectedDoctor) + 1; // สมมติ id จาก index +1
+          const data = await fetchAvailableTimes(doctorId, selectedDate);
+          setAvailableTimes(data.available_times || []);
+          setSelectedTime("");
+        } catch (error) {
+          console.error("Failed to load available times", error);
+          setAvailableTimes([]);
+        }
+      }
+    }
+    loadAvailableTimes();
+  }, [step, selectedDoctor, selectedDate, doctors]);
 
   const daysInMonth = currentMonth.daysInMonth();
   const firstDay = currentMonth.startOf("month").day();
@@ -104,9 +113,9 @@ export default function AppointmentPage() {
           <div className="appointment-content">
             <div className="title">New appointment</div>
             <div className="steps">
-              <span className={step === "datetime" ? "active" : ""}>Date & Time</span>
+              <span className={step === "datetime" ? "active" : ""}>Date</span>
               <span className={step === "service" ? "active" : ""}>Service</span>
-              <span className={step === "doctor" ? "active" : ""}>Doctor</span>
+              <span className={step === "doctor" ? "active" : ""}>Doctor & Time</span>
               <span className={step === "overview" ? "active" : ""}>Overview</span>
             </div>
 
@@ -114,7 +123,7 @@ export default function AppointmentPage() {
               <>
                 <div className="month-nav">
                   <button onClick={handlePrevMonth}>&lt;</button>
-                  <span>{currentMonth.format("MMMM")}</span>
+                  <span>{currentMonth.format("MMMM YYYY")}</span>
                   <button onClick={handleNextMonth}>&gt;</button>
                 </div>
                 <div className="calendar-header">
@@ -137,18 +146,6 @@ export default function AppointmentPage() {
                       disabled={!date}
                     >
                       {date ? date.date() : ""}
-                    </button>
-                  ))}
-                </div>
-                <div className="section-label">Available times</div>
-                <div className="times-scroll">
-                  {times.map((time) => (
-                    <button
-                      key={time}
-                      className={`time-button ${selectedTime === time ? "selected-time" : ""}`}
-                      onClick={() => setSelectedTime(time)}
-                    >
-                      {time}
                     </button>
                   ))}
                 </div>
@@ -197,11 +194,34 @@ export default function AppointmentPage() {
                     </button>
                   ))}
                 </div>
+
+                <div className="section-label" style={{ marginTop: "1rem" }}>
+                  Select available time
+                </div>
+                <div className="times-scroll">
+                  {availableTimes.length > 0 ? (
+                    availableTimes.map((time) => (
+                      <button
+                        key={time}
+                        className={`time-button ${selectedTime === time ? "selected-time" : ""}`}
+                        onClick={() => setSelectedTime(time)}
+                      >
+                        {time}
+                      </button>
+                    ))
+                  ) : (
+                    <p>No available times for selected doctor on this date.</p>
+                  )}
+                </div>
                 <div className="nav-buttons">
                   <button className="btn-back" onClick={() => setStep("service")}>
                     &larr; Back
                   </button>
-                  <button className="btn-continue" onClick={() => setStep("overview")}>
+                  <button
+                    className="btn-continue"
+                    disabled={!selectedTime}
+                    onClick={() => setStep("overview")}
+                  >
                     CONTINUE
                   </button>
                 </div>
@@ -222,44 +242,42 @@ export default function AppointmentPage() {
                     &larr; Back
                   </button>
                   <button
-  className="btn-confirm"
-  onClick={async () => {
-    try {
-      const appointmentDate = selectedDate;
-      const appointmentTimeStart = selectedTime.split(" - ")[0];
-      const appointmentDateTimeISO = new Date(`${appointmentDate}T${appointmentTimeStart}:00`).toISOString();
+                    className="btn-confirm"
+                    onClick={async () => {
+                      try {
+                        const appointmentDate = selectedDate;
+                        const appointmentTimeStart = selectedTime.split(" - ")[0];
 
-      const payload = {
-        appointment_date: appointmentDate,
-        appointment_time: appointmentDateTimeISO,
-        user_id: 1, // ปรับตามระบบจริง
-        servicetype_id: services.indexOf(selectedService) + 1,
-        status_id: 1,
-        doctor_id: doctors.indexOf(selectedDoctor) + 1,
-      };
+                        const payload = {
+                          appointment_date: appointmentDate,
+                          appointment_time: appointmentTimeStart + ":00",
+                          user_id: 1, // ปรับ user id ตามจริง
+                          servicetype_id: services.indexOf(selectedService) + 1,
+                          status_id: 1,
+                          doctor_id: doctors.indexOf(selectedDoctor) + 1,
+                        };
 
-      // เรียกใช้ service function
-      const data = await createAppointment(payload);
-      const appointmentId = data.id;
+                        const data = await createAppointment(payload);
+                        const appointmentId = data.id;
 
-      alert("Appointment confirmed!");
+                        alert("Appointment confirmed!");
 
-      navigate("/my-appointments", {
-        state: {
-          id: appointmentId,
-          date: appointmentDate,
-          time: selectedTime,
-          service: selectedService,
-          doctor: selectedDoctor,
-        },
-      });
-    } catch (error: any) {
-      alert("Error: " + error.message);
-    }
-  }}
->
-  CONFIRM
-</button>
+                        navigate("/my-appointments", {
+                          state: {
+                            id: appointmentId,
+                            date: appointmentDate,
+                            time: selectedTime,
+                            service: selectedService,
+                            doctor: selectedDoctor,
+                          },
+                        });
+                      } catch (error: any) {
+                        alert("Error: " + error.message);
+                      }
+                    }}
+                  >
+                    CONFIRM
+                  </button>
                 </div>
               </>
             )}
