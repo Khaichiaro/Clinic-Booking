@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-from models import db, Appointment, Status, ServiceType
+from models import db, Appointment, Status, ServiceType, User, Doctor  # import โมเดลครบ
 import os
 from datetime import datetime
 from prometheus_client import make_wsgi_app
@@ -10,7 +10,9 @@ app = Flask(__name__)
 CORS(app)
 
 # Database config
-app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv("DATABASE_URL", "postgresql://admin:1234@db:5432/mydb")
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv(
+    "DATABASE_URL", "postgresql://admin:1234@db:5432/mydb"
+)
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db.init_app(app)
 
@@ -40,13 +42,10 @@ def create_appointment():
     try:
         data = request.get_json(force=True)
 
-        # แปลง appointment_time โดยตัด 'Z' ท้าย string ออกถ้ามี
         iso_time = data.get('appointment_time')
-        if iso_time.endswith('Z'):
-            iso_time = iso_time[:-1]
-        appointment_time = datetime.fromisoformat(iso_time)
+        # แปลงเวลาล้วนๆ เป็น time object
+        appointment_time = datetime.strptime(iso_time, "%H:%M:%S").time()
 
-        # แปลง appointment_date (เป็นวันที่ ไม่ใช่ datetime)
         iso_date = data.get('appointment_date')
         appointment_date = datetime.fromisoformat(iso_date).date()
 
