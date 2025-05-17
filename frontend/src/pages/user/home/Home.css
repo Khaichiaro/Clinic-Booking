@@ -1,6 +1,6 @@
 .home-container {
   background-color: #cbf8ff;
-  height: 84.5vh;
+  height: 61vh;
   padding: 3rem;
   position: relative;
 }
@@ -69,6 +69,58 @@
   border: 2px solid #141e22;
   width: 61%;
   height: 200px;
-  top: 30%;
+  top: 35%;
   left: 19%;
 }
+
+.loader-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh; /* เต็มจอ */
+  background-color: #cbf8ff;
+}
+
+.carousel-container {
+  width: 100%;
+  max-height: 400px;
+  position: relative; /* ทำให้ overlay ซ้อนทับได้ */
+  overflow: hidden;
+  margin-bottom: 1rem;
+}
+
+.carousel-slide {
+  position: relative;
+}
+
+.carousel-slide img {
+  width: 100%;
+  height: 350px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+/* ส่วนแสดงข้อความซ้อนบนรูป */
+.carousel-overlay {
+  position: absolute;
+  top: 71%; /* ปรับตำแหน่งแนวตั้ง */
+  left: 7%; /* ปรับตำแหน่งแนวนอน */
+  background-color: rgba(29, 62, 69, 1); /* พื้นหลังโปร่งใส */
+  color: #fff;
+  padding: 1rem 2rem;
+  border-radius: 8px;
+  font-size: 1.2rem;
+  max-width: 60%;
+  z-index: 2;
+}
+
+.carousel-overlay h3 {
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+.carousel-overlay p {
+  margin: 0.5rem 0 0;
+  font-size: 1rem;
+}
+

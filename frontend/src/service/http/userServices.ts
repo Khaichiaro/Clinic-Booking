@@ -1,5 +1,6 @@
 import axios from "axios";
 import type { UserInterface } from "../../interface/IUser";
+import type { GenderInterface } from "../../interface/IGender";
 
 const API_BASE = "http://localhost:5001/api";
 
@@ -26,4 +27,9 @@ export const updateUser = async (id: number, updates: Partial<UserInterface>) =>
 export const deleteUser = async (id: number) => {
   const res = await axios.delete(`${API_BASE}/user/${id}`);
   return res.data;
+};
+
+export const getAllGenders = async (): Promise<GenderInterface[]> => {
+  const res = await axios.get(`${API_BASE}/genders`);
+  return res.data.data;
 };

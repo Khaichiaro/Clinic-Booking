@@ -1,20 +1,38 @@
 import "./Login.css";
 import { Link, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { getAllUsers } from "../../../service/http/userServices";
 import Logo3 from "../../../assets/logo3.svg";
-import { message } from "antd";
+import { message, Spin } from "antd";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(true);
 
   // const handletest = async () => {
   //   message.success("Login successful", 4);
   //   console.log("test");
   // };
+
+    useEffect(() => {
+    // Delay แสดงผล 0.5 วิ
+    setTimeout(() => {
+      setLoading(false);
+    }, 800);
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="loader-container">
+        <Spin size="large" />
+      </div>
+    );
+  }
+  
   const handleLogin = async () => {
+    // localStorage.setItem("userId", "9");
     if (!email || !password) {
       message.error("Please enter email and password");
       return;

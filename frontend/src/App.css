@@ -1,0 +1,5 @@
+/* ให้ message ของ Ant Design ลอยอยู่บนทุกอย่าง */
+.ant-message {
+  z-index: 9999 !important;
+  position: fixed !important;
+}
