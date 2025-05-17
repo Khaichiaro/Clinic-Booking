@@ -16,7 +16,7 @@ class User(db.Model):
     email = db.Column(db.String(100))
     phone_number = db.Column(db.String(20))
     gender_id = db.Column(db.Integer, db.ForeignKey('gender.id'))
-    gender = db.relationship('Gender', backref='users')
+   
 
      # Load gender immediately when querying User (for better API response)
     gender = db.relationship('Gender', backref='users', lazy='joined')

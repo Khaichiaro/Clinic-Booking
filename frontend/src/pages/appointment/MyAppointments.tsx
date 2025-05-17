@@ -1,3 +1,4 @@
+// Updated MyAppointmentsPage with service extraction
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 
@@ -9,9 +10,17 @@ import type {
 } from "../../interface/IAppointment";
 
 import logo from "../../assets/logo3.svg";
+import {
+  fetchAppointments,
+  fetchServiceTypes,
+  updateAppointmentStatus,
+} from "../../service/http/appointment";
+import { fetchDoctors } from "../../service/http/doctor";
 
 export default function MyAppointmentsPage() {
   const location = useLocation();
+
+  const userId = location.state?.userId || localStorage.getItem("userId");
   const initialAppointment = location.state as AppointmentInterface | undefined;
 
   const [appointment, setAppointment] = useState<AppointmentInterface | null>(
@@ -27,19 +36,13 @@ export default function MyAppointmentsPage() {
     async function loadData() {
       setLoading(true);
       try {
-        const resAppointments = await fetch("http://localhost:5003/api/appointments");
-        if (!resAppointments.ok) throw new Error("โหลดข้อมูลการจองไม่สำเร็จ");
-        let dataAppointments: AppointmentInterface[] = await resAppointments.json();
+        const dataAppointments = await fetchAppointments();
+        const dataServices = await fetchServiceTypes();
+        const dataDoctors = await fetchDoctors();
 
-        const resServices = await fetch("http://localhost:5003/api/service_types");
-        if (!resServices.ok) throw new Error("โหลดข้อมูลบริการไม่สำเร็จ");
-        const dataServices: ServiceTypeInterface[] = await resServices.json();
-
-        const resDoctors = await fetch("http://localhost:5002/api/doctors");
-        if (!resDoctors.ok) throw new Error("โหลดข้อมูลแพทย์ไม่สำเร็จ");
-        const dataDoctors: DoctorInterface[] = await resDoctors.json();
-
-        let pendingOnly = dataAppointments.filter((a) => a.status_id === 1);
+        let pendingOnly = dataAppointments.filter(
+          (a) => a.status_id === 1 && String(a.user_id) === String(userId)
+        );
 
         if (
           initialAppointment &&
@@ -70,27 +73,17 @@ export default function MyAppointmentsPage() {
         setLoading(false);
       }
     }
+
     loadData();
   }, [initialAppointment]);
 
   const handleCancel = async (id: number) => {
-    const confirmed = window.confirm("คุณต้องการยกเลิกการจองนี้ใช่หรือไม่?");
+    const confirmed = window.confirm("Are you sure you want to cancel this appointment?");
     if (!confirmed) return;
 
     try {
-      const response = await fetch(`http://localhost:5003/api/appointments/${id}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ status_id: 3 }),
-      });
-
-      if (!response.ok) {
-        const err = await response.json();
-        throw new Error(err.error || "ไม่สามารถยกเลิกการจองได้");
-      }
-
-      alert("การจองถูกยกเลิกแล้ว");
-
+      await updateAppointmentStatus(id, 3);
+      alert("The appointment has been cancelled.");
       setAllAppointments((prev) => prev.filter((a) => a.id !== id));
       if (appointment?.id === id) setAppointment(null);
     } catch (error: any) {
@@ -101,7 +94,6 @@ export default function MyAppointmentsPage() {
   return (
     <div className="appointment-wrapper1">
       <div className="appointment-container1">
-        {/* ห่อรูปด้วย div class logo-container เพื่อจัดกึ่งกลาง */}
         <div className="logo-container">
           <img src={logo} alt="Clinic Logo" className="logo-image" />
         </div>
@@ -143,7 +135,7 @@ export default function MyAppointmentsPage() {
                   className="btn-cancel1"
                   onClick={() => handleCancel(a.id!)}
                 >
-                  ยกเลิกการจอง
+                  CANCEL
                 </button>
               </div>
             ))
