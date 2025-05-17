@@ -87,17 +87,26 @@ INSERT INTO doctor (first_name, last_name, phone_number, email, password, gender
 ('Dr. Pong', 'In-on', '0999999999', 'pong@clinic.com', 'securepass', 2),
 ('Dr. John', 'Doe', '0823456789', 'john.doe@clinic.com', '12345678', 1);
 
--- สมมติเวลาทำงานของหมอคนที่ 1 (Dr. Pong In-on)
+-- หมอคนที่ 1 (Dr. Pong In-on)
 INSERT INTO doctor_schedule (doctor_id, work_date, start_time, end_time) VALUES
 (1, '2025-05-20', '08:00', '12:00'),
 (1, '2025-05-21', '13:00', '17:00'),
-(1, '2025-05-22', '08:00', '12:00');
+(1, '2025-05-22', '08:00', '12:00'),
+(1, '2025-05-23', '08:00', '12:00'),
+(1, '2025-05-24', '13:00', '17:00'),
+(1, '2025-05-25', '08:00', '12:00'),
+(1, '2025-05-26', '13:00', '17:00');
 
--- สมมติเวลาทำงานของหมอคนที่ 2 (Dr. John Doe)
+-- หมอคนที่ 2 (Dr. John Doe)
 INSERT INTO doctor_schedule (doctor_id, work_date, start_time, end_time) VALUES
 (2, '2025-05-20', '10:00', '14:00'),
 (2, '2025-05-21', '09:00', '12:00'),
-(2, '2025-05-23', '13:00', '18:00');
+(2, '2025-05-23', '13:00', '18:00'),
+(2, '2025-05-24', '09:00', '12:00'),
+(2, '2025-05-25', '10:00', '14:00'),
+(2, '2025-05-26', '09:00', '13:00'),
+(2, '2025-05-27', '13:00', '18:00');
+
 
 
 -- status
@@ -108,11 +117,12 @@ INSERT INTO status (status) VALUES
 ('Cancelled');
 
 -- service_type
+
 INSERT INTO service_type (service_type) VALUES
-('General Checkup'),
-('Dental'),
-('Dermatology'),
-('Vaccination');
+('Tooth Extraction'), ('Filling'),
+('Orthodontics'), ('Root Canal Treatment'), ('Veneers'), ('Crowns'),
+('Scaling');
+
 
 -- appointment
 INSERT INTO appointment (appointment_time, appointment_date, user_id, servicetype_id, status_id, doctor_id) VALUES

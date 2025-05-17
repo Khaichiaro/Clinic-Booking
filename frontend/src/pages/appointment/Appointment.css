@@ -1,6 +1,6 @@
   .docapp .appointment-wrapper {
     height: 100vh;
-    background: linear-gradient(to bottom right, #f1f5f9, #e2e8f0);
+    background: linear-gradient(to bottom right,#d4faff);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -11,9 +11,11 @@
     width: 100%;
     max-width: 28rem;
     border-radius: 30px;
-    background-color: white;
+    background-color: rgb(255, 255, 255);
     box-shadow: 0 10px 20px rgba(0,0,0,0.1);
   }
+
+  
   
   .docapp .appointment-content {
     padding: 1.5rem;
@@ -23,7 +25,7 @@
     text-align: center;
     font-size: 1.25rem;
     font-weight: bold;
-    color: #1f2937;
+    color: #1d3e45;
     margin-bottom: 0.5rem;
   }
   
@@ -37,7 +39,7 @@
   }
   
   .docapp .steps .active {
-    color: #2563eb;
+    color: #1d3e45;
   }
   
   .docapp .month-nav {
@@ -77,6 +79,7 @@
     align-items: center;
     justify-content: center;
     transition: all 0.2s;
+    
   }
   
   .docapp .calendar-cell:hover {
@@ -84,8 +87,9 @@
   }
   
   .docapp .selected-date {
-    background-color: #dbeafe;
-    color: #1d4ed8;
+    background-color: #77a0a9;
+    color: #1d3e45;
+    
   }
   
  .docapp .section-label {
@@ -103,9 +107,9 @@
   }
   
  .docapp .time-button {
-    border: 1px solid #d1d5db;
+    border: 1px solid #1d3e45;
     background-color: white;
-    color: #2563eb;
+    color: #1d3e45;
     padding: 0.5rem 1.25rem;
     border-radius: 9999px;
     font-size: 0.875rem;
@@ -120,7 +124,7 @@
   
  .docapp .selected-time {
     background-color: #bfdbfe;
-    color: #1e40af;
+    color: #1d3e45;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
   }
   
@@ -128,7 +132,7 @@
   .btn-confirm {
     width: 100%;
     border-radius: 9999px;
-    background: linear-gradient(to right, #3b82f6, #1e40af);
+    background: linear-gradient(to right,  #d4faff,#1d3e45);
     color: white;
     padding: 0.75rem 1rem;
     font-weight: 600;
@@ -162,12 +166,12 @@
   }
   
  .docapp .service-button:hover {
-    background-color: #dbeafe;
+    background-color: #8cbec9;
   }
   
 .docapp  .selected-service {
-    background-color: #bfdbfe;
-    color: #1e40af;
+    background-color: #8cbec9;
+    color: #1d3e45;
   }
   
  .docapp .nav-buttons {
@@ -177,10 +181,16 @@
   }
   
  .docapp .btn-back {
-    font-size: 0.875rem;
-    color: #2563eb;
-    text-decoration: underline;
-  }
+    font-size: 1.2rem;
+    color: #1d3e45;
+    padding: 0.5rem 1rem;
+    display: inline-block;    /* เป็นบล็อกอินไลน์ ให้จัดเรียงข้างกันได้ */
+    width: max-content;
+    margin-right: 1.5rem;     /* เว้นระยะขวาจากปุ่ม Continue */
+    vertical-align: middle;   /* จัดให้ข้อความอยู่กึ่งกลางแนวตั้ง */
+}
+
+
   
  .docapp .overview-box {
     background-color: #f9fafb;
@@ -195,3 +205,28 @@
     pointer-events: none;
   }
   
+
+
+.docapp button:focus,
+button:focus-visible {
+  outline: 2px solid #1d3e45;  /* เปลี่ยนเป็นสีแดง */
+  outline-offset: 2px;
+} 
+
+.docapp button:hover {
+  border-color: #8cbec9;
+}
+
+.docapp .steps span {
+  font-size: 1rem;
+  padding: 0.25rem 0.5rem;
+  cursor: default;
+  transition: all 0.3s ease;
+}
+
+.docapp .steps span.active {
+  font-size: 1.2rem;          /* ตัวหนังสือใหญ่ขึ้น */
+  font-weight: bold;          /* ตัวหนา */
+  border-bottom: 3px solid #1d3e45; /* เส้นใต้หนาสีฟ้า (เปลี่ยนสีได้) */
+  color: #1d3e45;             /* เปลี่ยนสีข้อความให้ชัดเจนขึ้น */
+}

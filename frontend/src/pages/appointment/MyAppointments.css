@@ -6,17 +6,17 @@
   place-items: center; /* กึ่งกลางแนวนอนและแนวตั้ง */
   overflow-y: auto; /* scroll แนวตั้งถ้าเนื้อหายาว */
   padding: 1rem;
-  background: linear-gradient(to bottom right, #f1f5f9, #e2e8f0);
+  background: linear-gradient(to bottom right, #d4faff);
 }
 
 
 
 .appointment-container1 {
   width: 100%;
-  max-width: 600px;
+  max-width: 800px;
   background-color: #ffffff;
   border-radius: 16px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  /* box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); */
   padding: 24px;
 }
 
@@ -24,7 +24,8 @@
   font-size: 28px;
   font-weight: bold;
   margin-bottom: 16px;
-  color: #343a40;
+  color: #1d3e45;
+  text-align: center;
 }
 
 /* ปรับ card ให้เป็น flex row โดยรายละเอียดจะเรียงในคอลัมน์เดียว และปุ่มอยู่ขวา */
@@ -32,7 +33,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: #f1f3f5;
+  background-color: #d5e7e7;
   padding: 20px 24px;
   border-radius: 12px;
   margin-bottom: 16px; /* เว้นช่องว่างระหว่าง card */
@@ -49,7 +50,7 @@
   display: flex;
   flex-direction: column;
   gap: 6px;
-  color: #343a40;
+  color: #1d3e45;
   font-size: 15px;
   max-width: 75%;
 }
@@ -60,7 +61,7 @@
 
 /* ปรับปุ่มยกเลิก */
 .btn-cancel1 {
-  background-color: #ff6b6b;
+  background-color: #1d3e45;
   color: white;
   border: none;
   padding: 10px 20px;
@@ -73,5 +74,16 @@
 }
 
 .btn-cancel1:hover {
-  background-color: #fa5252;
+  background-color: #45575c;
+}
+
+.logo-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+
+.logo-image {
+  width: 100px;
+  height: auto;
 }

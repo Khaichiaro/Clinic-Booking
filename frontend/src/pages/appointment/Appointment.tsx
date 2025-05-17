@@ -171,7 +171,7 @@ export default function AppointmentPage() {
                 </div>
                 <div className="nav-buttons">
                   <button className="btn-back" onClick={() => setStep("datetime")}>
-                    &larr; Back
+                    Back
                   </button>
                   <button className="btn-continue" onClick={() => setStep("doctor")}>
                     CONTINUE
@@ -215,7 +215,7 @@ export default function AppointmentPage() {
                 </div>
                 <div className="nav-buttons">
                   <button className="btn-back" onClick={() => setStep("service")}>
-                    &larr; Back
+                    Back
                   </button>
                   <button
                     className="btn-continue"
@@ -239,7 +239,7 @@ export default function AppointmentPage() {
                 </div>
                 <div className="nav-buttons">
                   <button className="btn-back" onClick={() => setStep("doctor")}>
-                    &larr; Back
+                    Back
                   </button>
                   <button
                     className="btn-confirm"
