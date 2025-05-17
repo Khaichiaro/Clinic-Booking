@@ -21,4 +21,3 @@ class User(db.Model):
      # Load gender immediately when querying User (for better API response)
     gender = db.relationship('Gender', backref='users', lazy='joined')
     
-    gender = db.relationship('Gender')
