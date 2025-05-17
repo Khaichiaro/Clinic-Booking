@@ -9,9 +9,9 @@ import RegisterPage from "./pages/user/register/index";
 
 import AppointmentPage from "./pages/appointment/Appointment";
 import MyAppointmentsPage from "./pages/appointment/MyAppointments";
-import DoctorAppointmentPage from "./pages/DoctorAppointmentPage";
-import AddDoctor from "./pages/AddDoctor";
-import DoctorList from "./pages/DoctorList";
+import DoctorAppointmentPage from "./pages/doctor/DoctorAppointmentPage";
+import AddDoctor from "./pages/doctor/AddDoctor";
+import DoctorList from "./pages/doctor/DoctorList";
 
 function App() {
   if (

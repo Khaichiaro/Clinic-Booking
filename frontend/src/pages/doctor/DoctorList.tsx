@@ -1,6 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";  // <-- นำเข้า useNavigate
-import idoc from "../assets/idoc.png";
+import idoc from "../../assets/idoc.png";
 import "./DoctorList.css";
 
 type Doctor = {
