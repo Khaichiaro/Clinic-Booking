@@ -1,4 +1,5 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import "antd/dist/reset.css";
 
 import HomePage from "./pages/user/home/index";
 import InfoPage from "./pages/user/info/index";
@@ -13,6 +14,13 @@ import AddDoctor from "./pages/AddDoctor";
 import DoctorList from "./pages/DoctorList";
 
 function App() {
+  if (
+    performance.navigation.type === 1 ||
+    !localStorage.getItem("init_clean")
+  ) {
+    localStorage.removeItem("userId");
+    localStorage.setItem("init_clean", "true");
+  }
   return (
     <Router>
       <div className="App">

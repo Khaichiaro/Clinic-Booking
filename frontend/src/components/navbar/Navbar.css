@@ -1,14 +1,23 @@
 .navbar {
-  background-color: #cbf8ff;
+  background-color: #b6e8f0;
   padding: 1rem 2rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
+  z-index: 1;
 }
 
 .nav-logo {
   height: 60px;
+  cursor: pointer;
+  transition: transform 0.3s ease-in-out;
 }
+
+.nav-logo:hover {
+  transform: scale(1.5) rotate(360deg);
+}
+
 
 .nav-button {
   background-color: #1e2b30;

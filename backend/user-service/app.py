@@ -5,6 +5,8 @@ from flask_cors import CORS
 from prometheus_client import make_wsgi_app
 from werkzeug.middleware.dispatcher import DispatcherMiddleware
 from models import db, Gender, User
+from sqlalchemy.orm import joinedload
+
 import os
 
 app = Flask(__name__)
@@ -31,7 +33,11 @@ def user_to_dict(user):
         "last_name": user.last_name,
         "email": user.email,
         "phone_number": user.phone_number,
-        "gender_id": user.gender_id
+        "gender_id": user.gender_id,
+        "gender": {
+            "id": user.gender.id,
+            "gender": user.gender.gender
+        } if user.gender else None
     }
 
 def gender_to_dict(gender):
@@ -69,7 +75,7 @@ def create_user():
 @app.route("/api/users", methods=["GET"])
 def get_users():
     try:
-        users = User.query.order_by(User.id.asc()).all()
+        users = User.query.options(joinedload(User.gender)).order_by(User.id.asc()).all()
         return jsonify({
             "message": "All users",
             "data": [user_to_dict(u) for u in users]
@@ -83,7 +89,7 @@ def get_users():
 @app.route("/api/user/<int:user_id>", methods=["GET"])
 def get_user(user_id):
     try:
-        user = User.query.get(user_id)
+        user = User.query.options(joinedload(User.gender)).get(user_id)
         if not user:
             return jsonify({"message": "User not found", "data": None}), 404
         return jsonify({"message": "User found", "data": user_to_dict(user)})

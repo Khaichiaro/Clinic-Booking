@@ -56,3 +56,11 @@
   background-color: #2f3f44;
   transform: scale(1.05);
 }
+
+.loader-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh; /* เต็มจอ */
+  background-color: #cbf8ff;
+}
