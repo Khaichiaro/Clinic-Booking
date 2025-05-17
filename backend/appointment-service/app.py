@@ -42,14 +42,10 @@ def create_appointment():
     try:
         data = request.get_json(force=True)
 
-        # แปลง appointment_time ให้เป็น time
         iso_time = data.get('appointment_time')
-        if iso_time.endswith('Z'):
-            iso_time = iso_time[:-1]
-        dt = datetime.fromisoformat(iso_time)
-        appointment_time = dt.time()
+        # แปลงเวลาล้วนๆ เป็น time object
+        appointment_time = datetime.strptime(iso_time, "%H:%M:%S").time()
 
-        # แปลง appointment_date เป็น date
         iso_date = data.get('appointment_date')
         appointment_date = datetime.fromisoformat(iso_date).date()
 

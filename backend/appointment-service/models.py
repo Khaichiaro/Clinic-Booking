@@ -42,7 +42,7 @@ class ServiceType(db.Model):
 class Appointment(db.Model):
     __tablename__ = 'appointment'
     id = db.Column(db.Integer, primary_key=True)
-    appointment_time = db.Column(db.Time)  # แก้เป็น Time
+    appointment_time = db.Column(db.Time)  # เวลาแบบ time
     appointment_date = db.Column(db.Date)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id', ondelete='CASCADE'))
     servicetype_id = db.Column(db.Integer, db.ForeignKey('service_type.id'))
