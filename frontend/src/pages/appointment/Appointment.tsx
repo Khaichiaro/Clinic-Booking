@@ -1,54 +1,57 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import dayjs from "dayjs";
 import "./Appointment.css";
 import { fetchServiceTypes, createAppointment } from "../../service/http/appointment";
 import { fetchDoctors, fetchAvailableTimes } from "../../service/http/doctor";
+import type { ServiceTypeInterface } from "../../interface/IAppointment";
 
 export default function AppointmentPage() {
-  const [currentMonth, setCurrentMonth] = useState(dayjs());
   const navigate = useNavigate();
+  const location = useLocation();
 
+  // ✅ รับ userId ที่ส่งมาจากหน้าอื่น (ถ้าไม่มี fallback เป็น 1)
+  const userId = location.state?.userId || 1;
+
+  const [currentMonth, setCurrentMonth] = useState(dayjs());
   const [selectedDate, setSelectedDate] = useState(dayjs().format("YYYY-MM-DD"));
   const [selectedTime, setSelectedTime] = useState("");
-  const [selectedService, setSelectedService] = useState("");
+  // const [selectedService, setSelectedService] = useState("");
   const [selectedDoctor, setSelectedDoctor] = useState("");
   const [step, setStep] = useState<"datetime" | "service" | "doctor" | "overview">("datetime");
 
-  const [services, setServices] = useState<string[]>([]);
+  // const [services, setServices] = useState<string[]>([]);
   const [doctors, setDoctors] = useState<string[]>([]);
   const [availableTimes, setAvailableTimes] = useState<string[]>([]);
 
-  // โหลดบริการ
-  useEffect(() => {
-    async function loadServices() {
-      try {
-        const data = await fetchServiceTypes();
-        const serviceNames = data.map((item: any) => item.service_type);
-        setServices(serviceNames);
-        if (serviceNames.length > 0 && !selectedService) {
-          setSelectedService(serviceNames[0]);
-        }
-      } catch (err) {
-        console.error(err);
-        const fallbackServices = [
-          "ขูดหินปูน",
-          "ถอนฟัน",
-          "อุดฟัน",
-          "จัดฟัน",
-          "ฟอกสีฟัน",
-          "รักษารากฟัน",
-          "วีเนียร์ฟัน",
-          "ครอบฟัน",
-        ];
-        setServices(fallbackServices);
-        if (!selectedService) setSelectedService(fallbackServices[0]);
-      }
-    }
-    loadServices();
-  }, []);
+  const [services, setServices] = useState<ServiceTypeInterface[]>([]);
+const [selectedService, setSelectedService] = useState<ServiceTypeInterface | null>(null);
 
-  // โหลดหมอ
+  
+
+  useEffect(() => {
+  async function loadServices() {
+    try {
+      const data = await fetchServiceTypes(); // [{ id, service_type }, ...]
+      setServices(data);
+      if (!selectedService && data.length > 0) {
+        setSelectedService(data[0]);
+      }
+    } catch (err) {
+      console.error(err);
+      const fallback = [
+        { id: 5, service_type: "Tooth Extraction" },
+        { id: 6, service_type: "Filling" },
+        { id: 7, service_type: "Orthodontics" },
+      ];
+      setServices(fallback);
+      if (!selectedService) setSelectedService(fallback[0]);
+    }
+  }
+  loadServices();
+}, []);
+
+
   useEffect(() => {
     async function loadDoctors() {
       try {
@@ -68,12 +71,11 @@ export default function AppointmentPage() {
     loadDoctors();
   }, []);
 
-  // โหลดเวลาว่างหมอเมื่อ step doctor, selectedDoctor หรือ selectedDate เปลี่ยน
   useEffect(() => {
     async function loadAvailableTimes() {
       if (step === "doctor" && selectedDoctor && selectedDate) {
         try {
-          const doctorId = doctors.indexOf(selectedDoctor) + 1; // สมมติ id จาก index +1
+          const doctorId = doctors.indexOf(selectedDoctor) + 1;
           const data = await fetchAvailableTimes(doctorId, selectedDate);
           setAvailableTimes(data.available_times || []);
           setSelectedTime("");
@@ -156,30 +158,29 @@ export default function AppointmentPage() {
             )}
 
             {step === "service" && (
-              <>
-                <div className="section-label">Select a service</div>
-                <div className="service-list">
-                  {services.map((service) => (
-                    <button
-                      key={service}
-                      className={`service-button ${selectedService === service ? "selected-service" : ""}`}
-                      onClick={() => setSelectedService(service)}
-                    >
-                      {service}
-                    </button>
-                  ))}
-                </div>
-                <div className="nav-buttons">
-                  <button className="btn-back" onClick={() => setStep("datetime")}>
-                    Back
-                  </button>
-                  <button className="btn-continue" onClick={() => setStep("doctor")}>
-                    CONTINUE
-                  </button>
-                </div>
-              </>
-            )}
-
+  <>
+    <div className="section-label">Select a service</div>
+    <div className="service-list">
+      {services.map((service) => (
+        <button
+          key={service.id}
+          className={`service-button ${selectedService?.id === service.id ? "selected-service" : ""}`}
+          onClick={() => setSelectedService(service)}
+        >
+          {service.service_type}
+        </button>
+      ))}
+    </div>
+    <div className="nav-buttons">
+      <button className="btn-back" onClick={() => setStep("datetime")}>
+        Back
+      </button>
+      <button className="btn-continue" onClick={() => setStep("doctor")}>
+        CONTINUE
+      </button>
+    </div>
+  </>
+)}
             {step === "doctor" && (
               <>
                 <div className="section-label">Select a doctor</div>
@@ -229,58 +230,61 @@ export default function AppointmentPage() {
             )}
 
             {step === "overview" && (
-              <>
-                <div className="section-label">Review your appointment</div>
-                <div className="overview-box">
-                  <p><strong>Date:</strong> {dayjs(selectedDate).format("dddd, MMMM D, YYYY")}</p>
-                  <p><strong>Time:</strong> {selectedTime}</p>
-                  <p><strong>Service:</strong> {selectedService}</p>
-                  <p><strong>Doctor:</strong> {selectedDoctor}</p>
-                </div>
-                <div className="nav-buttons">
-                  <button className="btn-back" onClick={() => setStep("doctor")}>
-                    Back
-                  </button>
-                  <button
-                    className="btn-confirm"
-                    onClick={async () => {
-                      try {
-                        const appointmentDate = selectedDate;
-                        const appointmentTimeStart = selectedTime.split(" - ")[0];
+  <>
+    <div className="section-label">Review your appointment</div>
+    <div className="overview-box">
+      <p><strong>Date:</strong> {dayjs(selectedDate).format("dddd, MMMM D, YYYY")}</p>
+      <p><strong>Time:</strong> {selectedTime}</p>
+      <p><strong>Service:</strong> {selectedService?.service_type}</p>
+      <p><strong>Doctor:</strong> {selectedDoctor}</p>
+    </div>
+    <div className="nav-buttons">
+      <button className="btn-back" onClick={() => setStep("doctor")}>
+        Back
+      </button>
+      <button
+        className="btn-confirm"
+        onClick={async () => {
+          try {
+            const appointmentDate = selectedDate;
+            const appointmentTimeStart = selectedTime.split(" - ")[0];
 
-                        const payload = {
-                          appointment_date: appointmentDate,
-                          appointment_time: appointmentTimeStart + ":00",
-                          user_id: 1, // ปรับ user id ตามจริง
-                          servicetype_id: services.indexOf(selectedService) + 1,
-                          status_id: 1,
-                          doctor_id: doctors.indexOf(selectedDoctor) + 1,
-                        };
+            const payload = {
+              appointment_date: appointmentDate,
+              appointment_time: appointmentTimeStart + ":00",
+              user_id: parseInt(userId), // ใช้ userId จาก state
+              servicetype_id: selectedService?.id, // ใช้ id จริงของ service
+              status_id: 1,
+              doctor_id: doctors.indexOf(selectedDoctor) + 1,
+            };
 
-                        const data = await createAppointment(payload);
-                        const appointmentId = data.id;
+            const data = await createAppointment(payload);
+            const appointmentId = data.id;
 
-                        alert("Appointment confirmed!");
+            alert("Appointment confirmed!");
 
-                        navigate("/my-appointments", {
-                          state: {
-                            id: appointmentId,
-                            date: appointmentDate,
-                            time: selectedTime,
-                            service: selectedService,
-                            doctor: selectedDoctor,
-                          },
-                        });
-                      } catch (error: any) {
-                        alert("Error: " + error.message);
-                      }
-                    }}
-                  >
-                    CONFIRM
-                  </button>
-                </div>
-              </>
-            )}
+            navigate("/my-appointments", {
+              state: {
+                id: appointmentId,
+                userId: userId,
+                date: appointmentDate,
+                time: selectedTime,
+                service: selectedService?.service_type,
+                doctor: selectedDoctor,
+              },
+            });
+          } catch (error: any) {
+            alert("Error: " + error.message);
+          }
+        }}
+      >
+        CONFIRM
+      </button>
+    </div>
+  </>
+)}
+
+                 
           </div>
         </div>
       </div>
