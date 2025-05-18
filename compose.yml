@@ -105,21 +105,19 @@ services:
   jenkins:
     container_name: jenkins
     build: ./jenkins
-    image: jenkins/jenkins:lts
     ports:
       - "8080:8080"
       - "50000:50000"
     volumes:
       - jenkins_home:/var/jenkins_home
-      - /var/run/docker.sock:/var/run/docker.sock
+    depends_on:
+      - docker-socket-proxy
     networks:
       - frontend
       - backend
+    environment:
+      - DOCKER_HOST=tcp://docker-socket-proxy:2375
     restart: unless-stopped
-    # command: >
-    #   bash -c "
-    #   chmod 666 /var/run/docker.sock &&
-    #   /usr/bin/tini -- /usr/local/bin/jenkins.sh"
 
   nginx:
     container_name: nginx
@@ -137,6 +135,27 @@ services:
       - frontend
       - backend
     restart: unless-stopped
+
+  docker-socket-proxy:
+    image: tecnativa/docker-socket-proxy
+    container_name: docker-socket-proxy
+    ports:
+      - "2375:2375"  # เปิดพอร์ต TCP ให้ Jenkins ใช้ Docker ผ่าน proxy ได้
+    environment:
+      - CONTAINERS=1  # อนุญาตให้ proxy เข้าถึงข้อมูล container (docker ps, inspect, logs, etc.)
+      - IMAGES=1      # อนุญาตให้ดึง/ลบ/จัดการ image ได้ (docker images, pull, build)
+      - NETWORKS=1    # อนุญาตให้จัดการ network ได้ (docker network ls/create)
+      - VOLUMES=1     # อนุญาตให้จัดการ volume ได้ (docker volume ls/create/rm)
+      - SERVICES=1    # สำหรับ Swarm Mode (docker service ls) → สามารถเปิดทิ้งไว้ได้ไม่มีผลใน standalone
+      - TASKS=1       # สำหรับ Swarm Mode → เช่น inspect task ของ service
+      - NODES=1       # สำหรับ Swarm Mode → เช่น docker node ls
+      - INFO=1        # อนุญาตให้รันคำสั่ง docker info ได้
+      - SYSTEM=1      # อนุญาตให้รัน docker system commands เช่น system prune
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro  # mount docker.sock แบบ read-only
+    networks:
+      - backend
+
 
 networks:
   frontend:
