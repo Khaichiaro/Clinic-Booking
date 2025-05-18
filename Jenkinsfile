@@ -10,14 +10,18 @@ pipeline {
     stage('Checkout Code') {
       steps {
         echo '🔄 Checking out code...'
-        checkout scm
+        dir('Clinic-Booking') {
+            checkout scm
+        }
       }
     }
 
     stage('Clean up existing containers') {
       steps {
         echo '🧹 Stopping old containers...'
-        sh "docker compose -f $COMPOSE_FILE down -v"
+        dir('Clinic-Booking') {
+            sh "docker compose -f $COMPOSE_FILE down -v"
+        }
         echo '🧽 Pruning unused Docker data...'
         sh "docker system prune -f"
       }
@@ -33,7 +37,9 @@ pipeline {
     stage('Run containers') {
       steps {
         echo '🚀 Starting containers...'
-        sh "docker compose -f $COMPOSE_FILE up --build"
+        dir('Clinic-Booking') {
+            sh "docker compose -f $COMPOSE_FILE up --build"
+        }
       }
     }
   }
