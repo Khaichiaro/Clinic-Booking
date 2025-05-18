@@ -9,10 +9,10 @@ pipeline {
   stages {
     stage('Test Docker Compose Access') {
         steps {
-            h 'docker compose version'
+            sh 'docker compose version'
         }
     }
-    
+
     stage('Checkout Code') {
       steps {
         echo '🔄 Checking out code...'
