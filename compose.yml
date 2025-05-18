@@ -4,7 +4,7 @@ services:
     container_name: frontend
     build: ./frontend
     ports:
-      - "5173:80"
+      - "5173:5173"
     networks:
       - frontend
     restart: unless-stopped
@@ -76,7 +76,7 @@ services:
       PGADMIN_DEFAULT_EMAIL: admin@gmail.com
       PGADMIN_DEFAULT_PASSWORD: admin
     ports:
-      - "8085:80"
+      - "8085:8085"
     networks:
       - monitoring
     restart: unless-stopped
@@ -91,6 +91,7 @@ services:
     restart: unless-stopped
 
   prometheus:
+    container_name: prometheus
     image: prom/prometheus
     ports:
       - "9090:9090"
