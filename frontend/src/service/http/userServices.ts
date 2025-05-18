@@ -2,7 +2,7 @@ import axios from "axios";
 import type { UserInterface } from "../../interface/IUser";
 import type { GenderInterface } from "../../interface/IGender";
 
-const API_BASE = "http://localhost:5005/api";
+const API_BASE = "http://localhost:5001/api";
 
 export const getAllUsers = async (): Promise<UserInterface[]> => {
   const res = await axios.get(`${API_BASE}/users`);

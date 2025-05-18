@@ -1,3 +1,5 @@
+import type { ReactNode } from "react";
+
 export interface StatusInterface {
   id?: number;
   status?: string;
@@ -9,6 +11,8 @@ export interface ServiceTypeInterface {
 }
 
 export interface AppointmentInterface {
+  doctor_name: ReactNode;
+  service_name: ReactNode;
   id?: number;
   appointment_time?: string;   // เก็บเป็นเวลา เช่น "09:00:00"
   appointment_date?: string;   // เก็บเป็นวันที่ เช่น "2025-05-20"

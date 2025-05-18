@@ -29,8 +29,8 @@ export default function MyAppointmentsPage() {
   const [allAppointments, setAllAppointments] = useState<AppointmentInterface[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const [services, setServices] = useState<ServiceTypeInterface[]>([]);
-  const [doctors, setDoctors] = useState<DoctorInterface[]>([]);
+  const [, setServices] = useState<ServiceTypeInterface[]>([]);
+  const [, setDoctors] = useState<DoctorInterface[]>([]);
 
   useEffect(() => {
     async function loadData() {
@@ -53,8 +53,8 @@ export default function MyAppointmentsPage() {
         }
 
         const enhancedAppointments = pendingOnly.map((a) => {
-          const service = dataServices.find((s) => s.id === a.servicetype_id);
-          const doctor = dataDoctors.find((d) => d.id === a.doctor_id);
+          const service = dataServices.find((s: { id: number | undefined; }) => s.id === a.servicetype_id);
+          const doctor = dataDoctors.find((d: { id: number | undefined; }) => d.id === a.doctor_id);
           return {
             ...a,
             service_name: service?.service_type ?? "-",
