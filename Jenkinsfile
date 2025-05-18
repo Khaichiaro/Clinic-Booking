@@ -5,6 +5,13 @@ pipeline {
     COMPOSE_FILE = 'compose.yml'
   }
 
+  stage('Test Docker Compose Access') {
+    steps {
+        sh 'docker compose version'
+    }
+}
+
+
   stages {
     stage('Checkout Code') {
       steps {
