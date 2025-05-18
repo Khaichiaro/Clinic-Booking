@@ -16,23 +16,25 @@ pipeline {
       }
     }
 
-    stage('Clean up existing containers') {
-      steps {
-        echo '🧹 Stopping old containers...'
-        dir('Clinic-Booking') {
-            sh "docker compose -f $COMPOSE_FILE down -v"
-        }
-        echo '🧽 Pruning unused Docker data...'
-        sh "docker system prune -f"
-      }
-    }
-
-    // stage('Build containers') {
+    // stage('Clean up existing containers') {
     //   steps {
-    //     echo '🏗️ Building containers...'
-    //     sh "docker compose -f $COMPOSE_FILE build"
+    //     echo '🧹 Stopping old containers...'
+    //     dir('Clinic-Booking') {
+    //         sh "docker compose -f $COMPOSE_FILE down -v"
+    //     }
+    //     echo '🧽 Pruning unused Docker data...'
+    //     sh "docker system prune -f"
     //   }
     // }
+
+    stage('Build containers') {
+      steps {
+        echo '🏗️ Building containers...'
+        dir('Clinic-Booking') {
+            sh "docker compose -f $COMPOSE_FILE build"
+        }
+      }
+    }
 
     stage('Run containers') {
       steps {
