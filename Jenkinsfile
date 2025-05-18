@@ -3,6 +3,7 @@ pipeline {
 
   environment {
     COMPOSE_FILE = 'compose.yml'
+    DOCKER_BUILDKIT = '0'    // ✅ บังคับไม่ใช้ BuildKit (เพื่อลด error 403)
   }
 
 
