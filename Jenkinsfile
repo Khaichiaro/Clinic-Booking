@@ -4,6 +4,7 @@ pipeline {
   environment {
     COMPOSE_FILE = 'compose.yml'
     DOCKER_BUILDKIT = '0'    // ✅ บังคับไม่ใช้ BuildKit (เพื่อลด error 403)
+    TARGET_SERVICES = 'frontend db user-service doctor-service appointment-service'
   }
 
 
@@ -17,22 +18,22 @@ pipeline {
       }
     }
 
-    // stage('Clean up existing containers') {
-    //   steps {
-    //     echo '🧹 Stopping old containers...'
-    //     dir('Clinic-Booking') {
-    //         sh "docker compose -f $COMPOSE_FILE down -v"
-    //     }
-    //     echo '🧽 Pruning unused Docker data...'
-    //     sh "docker system prune -f"
-    //   }
-    // }
+    stage('Clean up existing containers') {
+      steps {
+        echo '🧹 Stopping old containers...'
+        dir('Clinic-Booking') {
+            sh "docker compose -f $COMPOSE_FILE down -v $TARGET_SERVICES"
+        }
+        echo '🧽 Pruning unused Docker data...'
+        sh "docker system prune -f"
+      }
+    }
 
     stage('Build containers') {
       steps {
         echo '🏗️ Building containers...'
         dir('Clinic-Booking') {
-            sh "docker compose -f $COMPOSE_FILE build"
+            sh "docker compose -f $COMPOSE_FILE build $TARGET_SERVICES"
         }
       }
     }
@@ -41,7 +42,7 @@ pipeline {
       steps {
         echo '🚀 Starting containers...'
         dir('Clinic-Booking') {
-            sh "docker compose -f $COMPOSE_FILE up --build"
+            sh "docker compose -f $COMPOSE_FILE up --build $TARGET_SERVICES"
         }
       }
     }
