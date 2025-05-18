@@ -151,6 +151,8 @@ services:
       - NODES=1       # สำหรับ Swarm Mode → เช่น docker node ls
       - INFO=1        # อนุญาตให้รันคำสั่ง docker info ได้
       - SYSTEM=1      # อนุญาตให้รัน docker system commands เช่น system prune
+      - POST=1         # สามารถส่ง POST ได้
+      - DELETE=1       # สามารถส่ง DELETE ได้
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro  # mount docker.sock แบบ read-only
     networks:
