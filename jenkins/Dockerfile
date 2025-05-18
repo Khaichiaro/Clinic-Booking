@@ -15,7 +15,10 @@ RUN mkdir -p /usr/local/lib/docker/cli-plugins && \
     -o /usr/local/lib/docker/cli-plugins/docker-compose && \
     chmod +x /usr/local/lib/docker/cli-plugins/docker-compose
 
+# คัดลอก entrypoint script เข้าไป
+COPY entrypoint.sh /usr/local/bin/entrypoint.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh
+
 # ให้ Jenkins ใช้ docker ได้
 RUN usermod -aG docker jenkins
 
-USER jenkins
