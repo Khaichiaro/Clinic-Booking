@@ -8,6 +8,13 @@ services:
     networks:
       - frontend
     restart: unless-stopped
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    depends_on:
+      - user-service
+      - doctor-service
+      - appointment-service
 
   user-service:
     container_name: user-service
@@ -73,13 +80,16 @@ services:
     container_name: pgadmin
     image: dpage/pgadmin4
     environment:
-      PGADMIN_DEFAULT_EMAIL: admin@gmail.com
-      PGADMIN_DEFAULT_PASSWORD: admin
+      - PGADMIN_DEFAULT_EMAIL=admin@gmail.com
+      - PGADMIN_DEFAULT_PASSWORD=admin
+      - SCRIPT_NAME=/pgadmin
     ports:
-      - "8085:8085"
+      - "8085:80"
     networks:
       - monitoring
+      - backend
     restart: unless-stopped
+    
 
   grafana:
     container_name: grafana
@@ -88,7 +98,14 @@ services:
       - "3000:3000"
     networks:
       - monitoring
+      - backend
     restart: unless-stopped
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_SERVER_SERVE_FROM_SUB_PATH=true
+      - GF_SERVER_ROOT_URL=http://localhost/grafana/
+    volumes:
+      - grafana_data:/var/lib/grafana
 
   prometheus:
     container_name: prometheus
@@ -120,22 +137,40 @@ services:
       - DOCKER_HOST=tcp://docker-socket-proxy:2375
     restart: unless-stopped
 
-  nginx:
-    container_name: nginx
-    image: nginx:alpine
+  api-gateway:
+    build: ./api-gateway
+    container_name: api-gateway
+    restart: unless-stopped
+    networks:
+      - backend
     ports:
-      - "80:80"
-    volumes:
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - "8081:80"
+    # volumes:
+    #   - ./api-gateway/nginx.conf:/etc/nginx/nginx.conf
     depends_on:
       - frontend
       - user-service
       - doctor-service
       - appointment-service
+  
+  reverse-proxy:
+    build: ./reverse-proxy
+    container_name: reverse-proxy
+    restart: unless-stopped
     networks:
       - frontend
       - backend
-    restart: unless-stopped
+      - monitoring
+    ports:
+      - "80:80"
+    # volumes:
+    #   - ./reverse-proxy/nginx.conf:/etc/nginx/nginx.conf
+    depends_on:
+      - api-gateway
+      - frontend
+      - grafana
+      - prometheus
+      - pgadmin
 
   docker-socket-proxy:
     image: tecnativa/docker-socket-proxy
@@ -171,3 +206,4 @@ networks:
 volumes:
   db_data:
   jenkins_home:
+  grafana_data:
