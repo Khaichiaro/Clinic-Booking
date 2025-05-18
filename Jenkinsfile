@@ -5,14 +5,14 @@ pipeline {
     COMPOSE_FILE = 'compose.yml'
   }
 
-  stage('Test Docker Compose Access') {
-    steps {
-        sh 'docker compose version'
-    }
-}
-
 
   stages {
+    stage('Test Docker Compose Access') {
+        steps {
+            h 'docker compose version'
+        }
+    }
+    
     stage('Checkout Code') {
       steps {
         echo '🔄 Checking out code...'
