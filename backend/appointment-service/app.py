@@ -21,7 +21,7 @@ app.wsgi_app = DispatcherMiddleware(app.wsgi_app, {
     '/metrics': make_wsgi_app()
 })
 
-@app.route('/api/appointments', methods=['GET'])
+@app.route('/api/appointments/', methods=['GET'])
 def get_appointments():
     appointments = Appointment.query.all()
     result = []
@@ -37,7 +37,7 @@ def get_appointments():
         })
     return jsonify(result)
 
-@app.route('/api/appointments', methods=['POST'])
+@app.route('/api/appointments/', methods=['POST'])
 def create_appointment():
     try:
         data = request.get_json(force=True)
@@ -64,7 +64,7 @@ def create_appointment():
         print("Error creating appointment:", e)
         return jsonify({"error": str(e)}), 500
 
-@app.route('/api/service_types', methods=['GET'])
+@app.route('/api/service_types/', methods=['GET'])
 def get_service_types():
     service_types = ServiceType.query.all()
     result = []
@@ -75,7 +75,7 @@ def get_service_types():
         })
     return jsonify(result)
 
-@app.route('/api/appointments/<int:appointment_id>', methods=['PATCH'])
+@app.route('/api/appointments/<int:appointment_id>/', methods=['PATCH'])
 def update_appointment_status(appointment_id):
     data = request.get_json(force=True)
     appointment = Appointment.query.get_or_404(appointment_id)

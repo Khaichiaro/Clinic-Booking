@@ -48,7 +48,7 @@ def gender_to_dict(gender):
 
 # ------------------------------------ 
 # [C] Create User
-@app.route('/api/user', methods=['POST'])
+@app.route('/api/user/', methods=['POST'])
 def create_user():
     try:
         data = request.json
@@ -72,7 +72,7 @@ def create_user():
 
 # ------------------------------------
 # [R] Read All Users
-@app.route("/api/users", methods=["GET"])
+@app.route("/api/users/", methods=["GET"])
 def get_users():
     try:
         users = User.query.options(joinedload(User.gender)).order_by(User.id.asc()).all()
@@ -86,7 +86,7 @@ def get_users():
 
 # ------------------------------------
 # [R] Read One User
-@app.route("/api/user/<int:user_id>", methods=["GET"])
+@app.route("/api/user/<int:user_id>/", methods=["GET"])
 def get_user(user_id):
     try:
         user = User.query.options(joinedload(User.gender)).get(user_id)
@@ -99,7 +99,7 @@ def get_user(user_id):
 
 # ------------------------------------
 # [U] Update User
-@app.route("/api/user/<int:user_id>", methods=["PATCH"])
+@app.route("/api/user/<int:user_id>/", methods=["PATCH"])
 def update_user(user_id):
     try:
         user = User.query.get(user_id)
@@ -120,7 +120,7 @@ def update_user(user_id):
 
 # ------------------------------------
 # [D] Delete User
-@app.route("/api/user/<int:user_id>", methods=["DELETE"])
+@app.route("/api/user/<int:user_id>/", methods=["DELETE"])
 def delete_user(user_id):
     try:
         user = User.query.get(user_id)
@@ -135,7 +135,7 @@ def delete_user(user_id):
 
 # ------------------------------------
 # [R] Read All Genders
-@app.route("/api/genders", methods=["GET"])
+@app.route("/api/genders/", methods=["GET"])
 def get_genders():
     try:
         genders = Gender.query.order_by(Gender.id.asc()).all()

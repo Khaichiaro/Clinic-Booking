@@ -21,7 +21,7 @@ app.wsgi_app = DispatcherMiddleware(app.wsgi_app, {
 })
 
 # Routes
-@app.route('/api/doctors', methods=['GET'])
+@app.route('/api/doctors/', methods=['GET'])
 def get_doctors():
     try:
         doctors = Doctor.query.all()
@@ -37,7 +37,7 @@ def get_doctors():
         print("Error fetching doctors:", e)
         return jsonify({"error": str(e)}), 500
 
-@app.route('/api/doctors', methods=['POST'])
+@app.route('/api/doctors/', methods=['POST'])
 def create_doctor():
     try:
         data = request.get_json(force=True)
@@ -78,7 +78,7 @@ def init_genders():
         print("Error initializing genders:", e)
         return jsonify({"error": str(e)}), 500
 
-@app.route('/api/doctor/<int:doctor_id>/available_times', methods=['GET'])
+@app.route('/api/doctor/<int:doctor_id>/available_times/', methods=['GET'])
 def get_doctor_available_times(doctor_id):
     date_str = request.args.get('date')
     if not date_str:
