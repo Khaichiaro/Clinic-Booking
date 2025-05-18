@@ -102,7 +102,7 @@ const Home = () => {
 
         <div
           className="card purple"
-          onClick={() => navigate("/appointments", { state: { userId: token } })}
+          onClick={() => isLoggedIn && navigate("/appointments", { state: { userId: token } })}
         >
           <img src={Calendar} alt="calendar" />
           <div>Appointment</div>

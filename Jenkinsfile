@@ -1,15 +1,42 @@
 pipeline {
     agent any
+
+    environment {
+        COMPOSE_FILE = 'docker-compose.yml'
+    }
+
     stages {
-        stage('Build Docker Images') {
+        stage('Clone & Checkout') {
             steps {
-                sh 'docker-compose build'
+                checkout scm
             }
         }
-        stage('Run Services') {
+
+        stage('Clean up old containers') {
             steps {
-                sh 'docker-compose up -d'
+                sh "docker compose -f $COMPOSE_FILE down"
             }
+        }
+
+        stage('Build containers') {
+            steps {
+                sh "docker compose -f $COMPOSE_FILE build"
+            }
+        }
+
+        stage('Deploy containers') {
+            steps {
+                sh "docker compose -f $COMPOSE_FILE up -d"
+            }
+        }
+    }
+
+    post {
+        success {
+            echo '✅ Deployment complete!'
+        }
+        failure {
+            echo '❌ Deployment failed!'
         }
     }
 }
