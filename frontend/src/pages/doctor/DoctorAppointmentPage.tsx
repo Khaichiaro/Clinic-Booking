@@ -1,84 +1,75 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import styles from "./DoctorAppointmentPage.module.css";
 import { useNavigate } from "react-router-dom";
 import { getDoctorById } from "../../service/http/doctor";
-import {
-  fetchAppointments,
-  // สมมติมีฟังก์ชันดึงข้อมูลผู้ใช้ ถ้าไม่มี ต้องแก้ตาม API จริง
-  // fetchUserById,
-} from "../../service/http/appointment";
+import { fetchAppointments } from "../../service/http/appointment";
 
 import doctorImg from "../../assets/doctorg.png"; // หมอ (หญิง)
-import doctorm from "../../assets/doctorm.png";   // หมอ (ชาย)
-import pmImg from "../../assets/pm.png";           // คนไข้ชาย
-import pgImg from "../../assets/pg.png";           // คนไข้หญิง
-
-type AppointmentInterface = {
-  id: number;
-  doctor_id: number;
-  user_id: number;
-  date: string;         // "2025-08-16"
-  time: string;         // "12:00 PM"
-  service_type: string; // ชื่อบริการ
-  status: string;       // สถานะนัด
-  patient_gender_id: number; // เพศคนไข้ 1=ชาย 2=หญิง
-  patient_name: string;
-};
+import doctorm from "../../assets/doctorm.png"; // หมอ (ชาย)
+import pmImg from "../../assets/pm.png"; // คนไข้ชาย
+import pgImg from "../../assets/pg.png"; // คนไข้หญิง
+import type { AppointmentInterface } from "../../interface/IAppointment";
 
 const DoctorAppointmentPage: React.FC = () => {
   const [doctor, setDoctor] = useState<any>(null);
   const [appointments, setAppointments] = useState<AppointmentInterface[]>([]);
-  const [displayedAppointments, setDisplayedAppointments] = useState<AppointmentInterface[]>([]);
-  const [currentYear, setCurrentYear] = useState<number>(new Date().getFullYear());
-  const [currentMonth, setCurrentMonth] = useState<number>(new Date().getMonth()); // 0-11
+  const [currentYear, setCurrentYear] = useState<number>(
+    new Date().getFullYear()
+  );
+  const [currentMonth, setCurrentMonth] = useState<number>(
+    new Date().getMonth()
+  ); // 0-11
+  const [selectedDate, setSelectedDate] = useState<string>(
+    new Date().toISOString().slice(0, 10)
+  );
   const navigate = useNavigate();
   const doctorId = 1; // กำหนด doctorId
 
+  // ref เก็บกล่องวันที่แต่ละอัน
+  const dateRefs = useRef<Record<string, HTMLDivElement | null>>({});
+
   // โหลดข้อมูลหมอ
   useEffect(() => {
-    getDoctorById(doctorId)
-      .then(setDoctor)
-      .catch(console.error);
+    getDoctorById(doctorId).then(setDoctor).catch(console.error);
   }, [doctorId]);
 
-  // โหลดข้อมูลนัดทั้งหมด
+  // โหลดข้อมูลนัดทั้งหมดและกรองเฉพาะของหมอคนนี้
   useEffect(() => {
     fetchAppointments()
-      .then((allAppointments) => {
-        // กรองนัดเฉพาะของหมอคนนี้
-        const filtered = allAppointments.filter((app: AppointmentInterface) => app.doctor_id === doctorId);
+      .then((allAppointments: AppointmentInterface[]) => {
+        console.log("Appointments from API:", allAppointments);
+        const filtered = allAppointments.filter(
+          (app) => app.doctor_id === doctorId
+        );
         setAppointments(filtered);
       })
       .catch(console.error);
   }, [doctorId]);
 
-  // สร้างวันที่ของเดือนปัจจุบัน (หรือเดือนที่เลือก)
-  const getDaysInMonth = (year: number, month: number) => {
-    const date = new Date(year, month, 1);
-    const days = [];
-    while (date.getMonth() === month) {
-      days.push(new Date(date)); // clone date object
-      date.setDate(date.getDate() + 1);
-    }
-    return days;
-  };
-
-  // กรองนัดแสดงเฉพาะวันในเดือนที่เลือก
+  // scroll กล่องวันที่ที่เลือกเข้ามาใน view อัตโนมัติ
   useEffect(() => {
-    const days = getDaysInMonth(currentYear, currentMonth).map(d => d.toISOString().slice(0, 10)); // "YYYY-MM-DD"
-    const appsInMonth = appointments.filter(app => days.includes(app.date));
-    setDisplayedAppointments(appsInMonth);
-  }, [appointments, currentYear, currentMonth]);
+    const el = dateRefs.current[selectedDate];
+    if (el) {
+      el.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
+    }
+  }, [selectedDate]);
 
-  const prevMonth = () => {
-    setCurrentMonth(m => (m === 0 ? 11 : m - 1));
-    if (currentMonth === 0) setCurrentYear(y => y - 1);
+  // ฟังก์ชันสร้าง array วันที่ 4 วันรอบ ๆ วันที่เลือก (2 วันก่อน, วันที่เลือก, 1 วันหลัง)
+  const getNearbyDates = (baseDateStr: string) => {
+    const baseDate = new Date(baseDateStr);
+    const dates = [];
+    for (let i = -1; i <= 2; i++) {
+      const d = new Date(baseDate);
+      d.setDate(baseDate.getDate() + i);
+      dates.push(d);
+    }
+    return dates;
   };
 
-  const nextMonth = () => {
-    setCurrentMonth(m => (m === 11 ? 0 : m + 1));
-    if (currentMonth === 11) setCurrentYear(y => y + 1);
-  };
+  // กรองนัดเฉพาะวันที่เลือก โดยใช้ appointment_date
+  const filteredAppointmentsByDate = appointments.filter(
+    (app) => app.appointment_date === selectedDate
+  );
 
   // กำหนดรูปหมอตาม gender_id
   const getDoctorImage = (genderId: number) => {
@@ -87,20 +78,33 @@ const DoctorAppointmentPage: React.FC = () => {
     return doctorm;
   };
 
-  // กำหนดรูปคนไข้ตามเพศ
-  const getPatientAvatar = (genderId: number) => {
+  // กำหนดรูปคนไข้ตามเพศ (default เป็นชายถ้าไม่รู้)
+  const getPatientAvatar = (genderId?: number) => {
     if (genderId === 1) return pmImg;
     if (genderId === 2) return pgImg;
     return pmImg;
   };
 
+  // แปลงเดือนเป็นชื่อเดือน (อังกฤษ ย่อ)
+  const monthNames = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+  ];
+
   const goToDoctorList = () => {
     navigate("/doctorlist");
   };
 
-  // แปลงเดือนเป็นชื่อเดือน (อังกฤษ ย่อ)
-  const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-  
   return (
     <div className={styles.container}>
       {/* Left Card */}
@@ -113,9 +117,11 @@ const DoctorAppointmentPage: React.FC = () => {
               className={styles.doctorImage}
             />
             <h2 className={styles.doctorName}>
-             {doctor.first_name} {doctor.last_name}
+              {doctor.first_name} {doctor.last_name}
             </h2>
-            <p className={styles.contactText}>Phone Number: {doctor.phone_number}</p>
+            <p className={styles.contactText}>
+              Phone Number: {doctor.phone_number}
+            </p>
             <p className={styles.contactText}>Email: {doctor.email}</p>
             <div className={styles.buttonGroup}>
               <button className={styles.btn} onClick={goToDoctorList}>
@@ -132,47 +138,177 @@ const DoctorAppointmentPage: React.FC = () => {
       {/* Right Card */}
       <div className={styles.rightCard}>
         <h3 className={styles.title}>
-          {monthNames[currentMonth]} {currentYear}
+          {monthNames[new Date(selectedDate).getMonth()]}{" "}
+          {new Date(selectedDate).getFullYear()}
         </h3>
-        <div style={{display:"flex", justifyContent:"space-between", marginBottom:"10px"}}>
-          <button onClick={prevMonth}>&lt; Prev</button>
-          <button onClick={nextMonth}>Next &gt;</button>
+
+        {/* ปุ่มเลื่อนวันที่ */}
+        <div
+          style={{ display: "flex", alignItems: "center", marginBottom: 16 }}
+        >
+          <button
+            onClick={() => {
+              // เลื่อนไปวันที่ก่อนหน้า 4 วัน
+              const newDate = new Date(selectedDate);
+              newDate.setDate(newDate.getDate() - 4);
+              setSelectedDate(newDate.toISOString().slice(0, 10));
+            }}
+            style={{
+              fontSize: 18,
+              fontWeight: "bold",
+              cursor: "pointer",
+              border: "none",
+              background: "none",
+              marginRight: 8,
+            }}
+            aria-label="Previous dates"
+          >
+            &lt;
+          </button>
+
+          {/* กล่องวันที่ 4 วัน */}
+          <div
+            style={{
+              display: "flex",
+              gap: 12,
+              overflowX: "auto",
+              scrollBehavior: "smooth",
+            }}
+          >
+            {getNearbyDates(selectedDate).map((dateObj) => {
+              const dateStr = dateObj.toISOString().slice(0, 10);
+              const day = dateObj.getDate();
+              const isSelected = dateStr === selectedDate;
+              return (
+                <div
+                  key={dateStr}
+                  ref={(el) => (dateRefs.current[dateStr] = el)} // เก็บ ref
+                  className={
+                    isSelected ? styles.selectedDateBox : styles.dateBox
+                  }
+                  onClick={() => setSelectedDate(dateStr)}
+                  style={{
+                    cursor: "pointer",
+                    padding: "8px 12px",
+                    borderRadius: 8,
+                    border: isSelected ? "none" : "1.5px solid #344054",
+                    backgroundColor: isSelected ? "#203864" : "white",
+                    color: isSelected ? "white" : "#344054",
+                    fontWeight: "bold",
+                    textAlign: "center",
+                    minWidth: 52,
+                    userSelect: "none",
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: 4,
+                    flexShrink: 0,
+                  }}
+                >
+                  <div style={{ fontSize: 14, lineHeight: 1 }}>{day}</div>
+                  <div
+                    style={{
+                      fontSize: 12,
+                      letterSpacing: 1,
+                      textTransform: "uppercase",
+                    }}
+                  >
+                    {monthNames[dateObj.getMonth()]}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          <button
+            onClick={() => {
+              // เลื่อนไปวันที่ถัดไป 4 วัน
+              const newDate = new Date(selectedDate);
+              newDate.setDate(newDate.getDate() + 4);
+              setSelectedDate(newDate.toISOString().slice(0, 10));
+            }}
+            style={{
+              fontSize: 18,
+              fontWeight: "bold",
+              cursor: "pointer",
+              border: "none",
+              background: "none",
+              marginLeft: 8,
+            }}
+            aria-label="Next dates"
+          >
+            &gt;
+          </button>
         </div>
 
-        <div className={styles.dateSelector} style={{flexWrap:"wrap"}}>
-          {getDaysInMonth(currentYear, currentMonth).map(dateObj => {
-            const dateStr = dateObj.toISOString().slice(0, 10);
-            const day = dateObj.getDate();
-
-            return (
-              <div key={dateStr} className={styles.dateBox}>
-                <div className={styles.dayText}>{day}</div>
-                <div className={styles.monthText}>{monthNames[currentMonth]}</div>
-                {/* แสดงนัดที่ตรงกับวันนั้น */}
-                {displayedAppointments
-                  .filter(app => app.date === dateStr)
-                  .map(app => (
-                    <div key={app.id} className={styles.appointmentCard} style={{backgroundColor: "#D6F0FF", marginTop: "4px"}}>
-                      <div className={styles.appointmentTime}>{app.time}</div>
-                      <div className={styles.appointmentInfo}>
-                        <img
-                          src={getPatientAvatar(app.patient_gender_id)}
-                          alt="patient"
-                          className={styles.avatarImg}
-                        />
-                        <div>
-                          <div className={styles.patientName}>{app.patient_name}</div>
-                          <div className={styles.treatmentType}>
-                            {app.service_type} - <span>{app.status}</span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
+        <h4 style={{ marginBottom: 8 }}>Upcoming Appointment</h4>
+        {filteredAppointmentsByDate.length === 0 && <p>No appointments</p>}
+        {filteredAppointmentsByDate.map((app) => (
+          <div
+            key={app.id}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              padding: "12px 16px",
+              borderRadius: 12,
+              marginBottom: 12,
+              backgroundColor:
+                app.user?.gender_id === 1 ? "#C6E2FF" : "#DDDFFF",
+            }}
+          >
+            <div
+              style={{
+                fontWeight: "bold",
+                marginRight: 16,
+                minWidth: 80,
+                fontSize: 14,
+                color: "#203864",
+              }}
+            >
+              {app.appointment_time}
+            </div>
+            <img
+              src={getPatientAvatar(app.user?.gender_id)}
+              alt="patient"
+              style={{
+                width: 40,
+                height: 40,
+                borderRadius: "50%",
+                marginRight: 12,
+                flexShrink: 0,
+              }}
+            />
+            <div>
+              <div
+                style={{
+                  fontWeight: "bold",
+                  fontSize: 14,
+                  color: "#000",
+                  marginBottom: 2,
+                }}
+              >
+                {app.user?.first_name ?? "Unknown"} {app.user?.last_name ?? ""}
               </div>
-            );
-          })}
-        </div>
+              <div
+                style={{
+                  fontSize: 13,
+                  color: "#344054",
+                  marginBottom: 2,
+                }}
+              >
+                {typeof app.service_name === "string" ? app.service_name : ""}
+              </div>
+              <div
+                style={{
+                  fontSize: 12,
+                  color: "#7f8694",
+                  fontStyle: "italic",
+                }}
+              >
+                {app.status?.status ?? ""}
+              </div>
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );

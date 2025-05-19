@@ -6,6 +6,7 @@ from datetime import datetime, timedelta
 from prometheus_client import make_wsgi_app
 from werkzeug.middleware.dispatcher import DispatcherMiddleware
 from sqlalchemy.orm import joinedload
+from models import User, ServiceType, Status  # อย่าลืม import model เหล่านี้ด้วย
 
 
 
@@ -182,6 +183,54 @@ def get_doctor_available_times(doctor_id):
             slot_start = slot_finish
 
     return jsonify({"available_times": available_slots})
+
+# ------------------------------------
+# Get All Appointments พร้อมข้อมูล user, service_type, status, doctor
+@app.route('/api/doctor/appointments/', methods=['GET'])
+def get_appointments():
+    try:
+        appointments = Appointment.query.options(
+            joinedload(Appointment.user),
+            joinedload(Appointment.service_type),
+            joinedload(Appointment.status),
+            joinedload(Appointment.doctor)
+        ).all()
+
+        def appointment_to_dict(app):
+            return {
+                "id": app.id,
+                "appointment_date": app.appointment_date.strftime('%Y-%m-%d') if app.appointment_date else None,
+                "appointment_time": app.appointment_time.strftime('%H:%M:%S') if app.appointment_time else None,
+                "doctor_id": app.doctor_id,
+                "user_id": app.user_id,
+                "servicetype_id": app.servicetype_id,
+                "status_id": app.status_id,
+                "user": {
+                    "id": app.user.id,
+                    "first_name": app.user.first_name,
+                    "last_name": app.user.last_name,
+                    "gender_id": app.user.gender_id,
+                    "email": app.user.email,
+                    "phone_number": app.user.phone_number,
+                } if app.user else None,
+                "service_name": app.service_type.service_type if app.service_type else None,
+                "status": {
+                    "id": app.status.id,
+                    "status": app.status.status
+                } if app.status else None,
+                "doctor": {
+                    "id": app.doctor.id,
+                    "first_name": app.doctor.first_name,
+                    "last_name": app.doctor.last_name
+                } if app.doctor else None
+            }
+
+        result = [appointment_to_dict(app) for app in appointments]
+
+        return jsonify(result)
+    except Exception as e:
+        print("xxx ERROR [GET /appointments]:", e)
+        return jsonify({"message": "Failed to get appointments", "data": None, "error": str(e)}), 500
 
 # ------------------------------------
 if __name__ == '__main__':
