@@ -28,9 +28,7 @@
   width: 450px;
   flex-shrink: 0;
   margin-bottom: 58px; /* เว้นระยะด้านล่างเวลาจอเล็ก */
-
 }
-
 
 .doctorImage {
   width: 300px;
@@ -156,4 +154,3 @@
 .treatmentType {
   color: #9b9b9b;
 }
-

@@ -35,6 +35,17 @@ export async function fetchDoctors() {
   return res.json();
 }
 
+export async function fetchAppointments(doctorId?: number) {
+  let url = `${DOCTOR_API_BASE}/doctor/appointments/`;
+  if (doctorId !== undefined) {
+    url += `?doctor_id=${doctorId}`;
+  }
+  const res = await fetch(url);
+  if (!res.ok) throw new Error("Failed to fetch appointments");
+  return res.json(); // คาดว่า response เป็น array ของ appointment objects
+}
+
+
 // ฟังก์ชันเรียกเวลาว่างของหมอคนที่ doctorId ในวันที่ date (รูปแบบ "YYYY-MM-DD")
 export async function fetchAvailableTimes(doctorId: number, date: string) {
   const res = await fetch(`${DOCTOR_API_BASE}/doctor/${doctorId}/available_times?date=${date}`);
