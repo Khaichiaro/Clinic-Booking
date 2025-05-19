@@ -3,7 +3,7 @@ services:
   frontend:
     container_name: frontend
     build: ./frontend
-    image: clinic-booking/frontend
+    image: clinic-booking/frontend:latest
     ports:
       - "5173:5173"
     networks:
@@ -20,7 +20,7 @@ services:
   user-service:
     container_name: user-service
     build: ./backend/user-service
-    image: clinic-booking/user-service
+    image: clinic-booking/user-service:latest
     ports:
       - "5001:5001"    # Main API
     environment:
@@ -34,7 +34,7 @@ services:
   doctor-service:
     container_name: doctor-service
     build: ./backend/doctor-service
-    image: clinic-booking/doctor-service
+    image: clinic-booking/doctor-service:latest
     ports:
       - "5002:5002"   # Main API
     environment:
@@ -48,7 +48,7 @@ services:
   appointment-service:
     container_name: appointment-service
     build: ./backend/appointment-service
-    image: clinic-booking/appointment-service
+    image: clinic-booking/appointment-service:latest
     ports:
       - "5003:5003"   # Main API
     environment:

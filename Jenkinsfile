@@ -43,7 +43,6 @@ pipeline {
         echo '🚀 Starting containers...'
         dir('Clinic-Booking') {
             sh "docker compose -f $COMPOSE_FILE up -d $TARGET_SERVICES"
-            sh 'docker image prune -f'
         }
       }
     }
