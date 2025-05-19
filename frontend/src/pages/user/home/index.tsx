@@ -103,7 +103,7 @@ const Home = () => {
 
         <div
           className="card dark"
-          onClick={() => isLoggedIn && navigate("/doctorlist")}
+          onClick={() => isLoggedIn && navigate("/ourdoctors")}
         >
           <img src={doctor} alt="doctor" />
           <div>DOCTOR</div>

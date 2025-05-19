@@ -54,7 +54,6 @@ const DoctorList: React.FC = () => {
           <table className="doctor-table">
             <thead>
               <tr>
-                <th>id</th>
                 <th>Firstname</th>
                 <th>Lastname</th>
                 <th>Phonenumber</th>
@@ -66,12 +65,11 @@ const DoctorList: React.FC = () => {
               {doctors.length > 0 ? (
                 doctors.map((doc, idx) => (
                   <tr key={doc.id} className={idx % 2 === 1 ? "striped" : ""}>
-                    <td>{doc.id}</td>
                     <td>{doc.first_name}</td>
                     <td>{doc.last_name}</td>
                     <td>{doc.phone_number}</td>
                     <td>{doc.email}</td>
-                    <td className="menu">⋮</td>
+                    <td className="menu"></td>
                   </tr>
                 ))
               ) : (
