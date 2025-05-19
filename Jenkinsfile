@@ -34,7 +34,7 @@ pipeline {
         echo '🏗️ Building containers...'
         dir('Clinic-Booking') {
           sh "docker compose -f $COMPOSE_FILE build --no-cache $TARGET_SERVICES"
-          sh "docker image prune -f --filter \"dangling=true\""
+          sh 'docker image prune -f --filter "dangling=true" || true'
         }
       }
     }
