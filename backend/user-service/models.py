@@ -15,6 +15,9 @@ class User(db.Model):
     password = db.Column(db.String(100))
     email = db.Column(db.String(100))
     phone_number = db.Column(db.String(20))
+    weight = db.Column(db.Float)
+    height = db.Column(db.Float)
+    age = db.Column(db.Integer)
     gender_id = db.Column(db.Integer, db.ForeignKey('gender.id'))
    
 

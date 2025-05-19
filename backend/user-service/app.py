@@ -33,6 +33,9 @@ def user_to_dict(user):
         "last_name": user.last_name,
         "email": user.email,
         "phone_number": user.phone_number,
+        "weight": user.weight,
+        "height": user.height,
+        "age": user.age,
         "gender_id": user.gender_id,
         "gender": {
             "id": user.gender.id,
@@ -58,6 +61,9 @@ def create_user():
             password=data['password'],
             email=data['email'],
             phone_number=data['phone_number'],
+            weight=data['weight'],
+            height=data['height'],
+            age=data['age'],
             gender_id=data['gender_id']
         )
         db.session.add(user)
@@ -111,6 +117,9 @@ def update_user(user_id):
         user.password = data.get("password", user.password)
         user.email = data.get("email", user.email)
         user.phone_number = data.get("phone_number", user.phone_number)
+        user.weight = data.get("weight", user.weight)
+        user.height = data.get("height", user.height)
+        user.age = data.get("age", user.age)
         user.gender_id = data.get("gender_id", user.gender_id)
         db.session.commit()
         return jsonify({"message": "User updated", "data": user_to_dict(user)})

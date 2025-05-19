@@ -62,12 +62,20 @@ export default function EditUserPage() {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/;
     const phoneRegex = /^\d{10}$/;
+    const ageRegex = /^(?:0[1-9]|[1-9][0-9]|1[01][0-9]|120)$/;
+    const heightRegex = /^(?:[1-9]\d(?:\.\d+)?|1\d{2}(?:\.\d+)?|2[0-4]\d(?:\.\d+)?|250(?:\.0+)?)$/;
+    const weightRegex = /^(?:[1-9](?:\.\d+)?|[1-9]\d(?:\.\d+)?|1\d{2}(?:\.\d+)?|2\d{2}(?:\.\d+)?|300(?:\.0+)?)$/;
+
 
     if (
       !form.first_name ||
       !form.last_name ||
       !form.email ||
-      !form.phone_number
+      !form.phone_number||
+      !form.gender_id||
+      !form.age||
+      !form.height||
+      !form.weight
     ) {
       message.error("Please fill in all required fields.");
       return;
@@ -87,6 +95,21 @@ export default function EditUserPage() {
 
     if (!phoneRegex.test(form.phone_number)) {
       message.error("Phone number must be 10 digits.");
+      return;
+    }
+
+    if (!ageRegex.test(form.age.toString())) {
+      message.error("Age must be between 0 and 120.");
+      return;
+    }
+
+    if (!heightRegex.test(form.height.toString())) {
+      message.error("Height must be between 1.0 and 290.9.");
+      return;
+    }
+
+    if (!weightRegex.test(form.weight.toString())) {
+      message.error("Weight must be between 1.0 and 300.9.");
       return;
     }
 
@@ -159,6 +182,27 @@ export default function EditUserPage() {
           name="email"
           placeholder="Email"
           value={form.email || ""}
+          onChange={handleChange}
+        />
+
+        <input
+          name="age"
+          placeholder="Age"
+          value={form.age || ""}
+          onChange={handleChange}
+        />
+
+        <input
+          name="height"
+          placeholder="Height"
+          value={form.height || ""}
+          onChange={handleChange}
+        />
+
+        <input
+          name="weight"
+          placeholder="Weight"
+          value={form.weight || ""}
           onChange={handleChange}
         />
 

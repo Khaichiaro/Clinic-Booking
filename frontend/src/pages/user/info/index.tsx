@@ -15,7 +15,7 @@ export default function InfoPage() {
     (async () => {
       const allUsers = await getAllUsers();
       const userId = localStorage.getItem("userId");
-      const currentUser = allUsers.find(u => String(u.id) === userId);
+      const currentUser = allUsers.find((u) => String(u.id) === userId);
       console.log("currentUser", currentUser);
       if (currentUser) setUser(currentUser);
 
@@ -38,12 +38,34 @@ export default function InfoPage() {
     <div className="info-container">
       <div className="info-card">
         <img src={Avatar} alt="avatar" />
-        <h2>{user.first_name} {user.last_name}</h2>
-        <p><strong>Email:</strong> {user.email}</p>
-        <p><strong>Phone:</strong> {user.phone_number}</p>
-        <p><strong>Gender:</strong> {user.gender?.gender}</p>
-        <button className="info-button" onClick={() => navigate("/edit")}>Edit Info</button>
-        <button className="info-back-button" onClick={() => navigate("/")}>Back</button>
+        <h2>
+          {user.first_name} {user.last_name}
+        </h2>
+        <p>
+          <strong>Email:</strong> {user.email}
+        </p>
+        <p>
+          <strong>Phone:</strong> {user.phone_number}
+        </p>
+        <p>
+          <strong>Age:</strong> {user.age}
+        </p>
+        <p>
+          <strong>Weight:</strong> {user.weight} kg
+        </p>
+        <p>
+          <strong>Height:</strong> {user.height} cm
+        </p>
+
+        <p>
+          <strong>Gender:</strong> {user.gender?.gender}
+        </p>
+        <button className="info-button" onClick={() => navigate("/edit")}>
+          Edit Info
+        </button>
+        <button className="info-back-button" onClick={() => navigate("/")}>
+          Back
+        </button>
       </div>
     </div>
   ) : (

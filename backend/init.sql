@@ -20,6 +20,9 @@ CREATE TABLE "user" (
     password VARCHAR(100),
     email VARCHAR(100),
     phone_number VARCHAR(20),
+    weight FLOAT,
+    height FLOAT,
+    age INTEGER,
     gender_id INTEGER REFERENCES gender(id)
 );
 
@@ -76,11 +79,14 @@ INSERT INTO gender (gender) VALUES
 ('LGBTQ+');
 
 -- user
-INSERT INTO "user" (first_name, last_name, password, email, phone_number, gender_id) VALUES
-('Pongsakorn', 'In-on', '123456', 'pongsakorn@gmail.com', '0911111111', 1),
-('In-on', 'Pongsakorn', 'abcdef', 'inon@example.com', '0922222222', 2),
-('PongPongPong', 'Sarakorn', 'letmein', 'pong@example.com', '0933333333', 1),
-('B6507787', 'PongPongPong', 'password', 'b6507787@example.com', '0944444444', 1);
+INSERT INTO "user" 
+(first_name, last_name, password, email, phone_number, gender_id, weight, height, age) 
+VALUES
+('Pongsakorn', 'In-on', '123456', 'pongsakorn@gmail.com', '0911111111', 1, 65.0, 185, 22),
+('In-on', 'Pongsakorn', 'abcdef', 'inon@example.com', '0922222222', 2, 55.5, 160, 21),
+('PongPongPong', 'Sarakorn', 'letmein', 'pong@example.com', '0933333333', 1, 70.2, 180, 24),
+('B6507787', 'PongPongPong', 'password', 'b6507787@example.com', '0944444444', 1, 61.8, 170, 23);
+
 
 -- doctor
 INSERT INTO doctor (first_name, last_name, phone_number, email, password, gender_id) VALUES
