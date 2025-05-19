@@ -4,13 +4,9 @@ import "./Home.css";
 import Slide1 from "../../../assets/slide1.png";
 import Slide2 from "../../../assets/slide2.png";
 import iapp from "../../../assets/iapp.png"; 
-import appointment from "../../../assets/appointment.png"; 
+import appointment from "../../../assets/appointment.PNG";
 import doctor from "../../../assets/doctorg.png"; 
 
-
-import User1 from "../../../assets/user1.svg";
-import Calendar from "../../../assets/calendar.svg";
-import Doctor1 from "../../../assets/doctor1.svg";
 import { useEffect, useState } from "react";
 import { Carousel, Spin } from "antd";
 
