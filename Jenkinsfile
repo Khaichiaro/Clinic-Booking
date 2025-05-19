@@ -29,20 +29,20 @@ pipeline {
       }
     }
 
-    // stage('Build containers') {
-    //   steps {
-    //     echo '🏗️ Building containers...'
-    //     dir('Clinic-Booking') {
-    //         sh "docker compose -f $COMPOSE_FILE build $TARGET_SERVICES"
-    //     }
-    //   }
-    // }
+    stage('Build containers') {
+      steps {
+        echo '🏗️ Building containers...'
+        dir('Clinic-Booking') {
+            sh "docker compose -f $COMPOSE_FILE build $TARGET_SERVICES --no-cache"
+        }
+      }
+    }
 
     stage('Build and Run containers') {
       steps {
         echo '🚀 Starting containers...'
         dir('Clinic-Booking') {
-            sh "docker compose -f $COMPOSE_FILE up --build $TARGET_SERVICES"
+            sh "docker compose -f $COMPOSE_FILE up -d $TARGET_SERVICES"
         }
       }
     }
