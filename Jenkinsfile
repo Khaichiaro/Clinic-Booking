@@ -56,5 +56,9 @@ pipeline {
     failure {
       echo '❌ Deployment failed!'
     }
+    always {
+      echo '🧹 Post-cleaning Docker environment...'
+      sh 'docker image prune -f --filter "dangling=true"'
+    }
   }
 }
