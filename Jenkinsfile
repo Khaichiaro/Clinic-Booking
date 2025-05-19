@@ -25,17 +25,7 @@ pipeline {
           sh "docker compose -f $COMPOSE_FILE down -v $TARGET_SERVICES"
         }
         echo '🧽 Pruning unused Docker data...'
-        sh "docker system prune -f"
-      }
-    }
-
-    stage('Build containers') {
-      steps {
-        echo '🏗️ Building containers...'
-        dir('Clinic-Booking') {
-          sh "docker compose -f $COMPOSE_FILE build --no-cache $TARGET_SERVICES"
-          sh 'docker image prune -f --filter "dangling=true" || true'
-        }
+        sh "docker system prune -a -f"
       }
     }
 
