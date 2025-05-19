@@ -29,16 +29,16 @@ pipeline {
       }
     }
 
-    stage('Build containers') {
-      steps {
-        echo '🏗️ Building containers...'
-        dir('Clinic-Booking') {
-            sh "docker compose -f $COMPOSE_FILE build $TARGET_SERVICES"
-        }
-      }
-    }
+    // stage('Build containers') {
+    //   steps {
+    //     echo '🏗️ Building containers...'
+    //     dir('Clinic-Booking') {
+    //         sh "docker compose -f $COMPOSE_FILE build $TARGET_SERVICES"
+    //     }
+    //   }
+    // }
 
-    stage('Run containers') {
+    stage('Build and Run containers') {
       steps {
         echo '🚀 Starting containers...'
         dir('Clinic-Booking') {
