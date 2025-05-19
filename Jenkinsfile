@@ -33,7 +33,8 @@ pipeline {
       steps {
         echo '🏗️ Building containers...'
         dir('Clinic-Booking') {
-            sh "docker compose -f $COMPOSE_FILE build $TARGET_SERVICES"
+            docker compose -f $COMPOSE_FILE build --no-cache $TARGET_SERVICES
+            docker image prune -f --filter "dangling=true"
         }
       }
     }
@@ -46,6 +47,16 @@ pipeline {
         }
       }
     }
+
+    stage('🧪 Debug Status') {
+      steps {
+        sh 'docker ps -a'
+        sh 'docker logs frontend || true'
+        sh 'docker logs user-service || true'
+        sh 'docker inspect frontend || true'
+      }
+    }
+
   }
 
   post {
