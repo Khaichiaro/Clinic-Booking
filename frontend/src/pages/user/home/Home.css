@@ -1,6 +1,6 @@
 .home-container {
   background-color: #cbf8ff;
-  height: 61vh;
+  height: 135vh;
   padding: 3rem;
   position: relative;
 }
@@ -45,31 +45,48 @@
   box-shadow: 0 12px 20px rgba(0, 0, 0, 0.2);
 }
 
-.card.light {
-  background-color: #ffffff;
-  border: 2px solid #e0f7ff;
-  color: #1d3e45;
-  width: 20%;
-  top: 10%;
-  left: 19%;
-}
+
 
 .card.purple {
   background-color: #e9e3ff;
   color: #3c2e84;
-  border: 2px solid #d1c4ff;
-  width: 36%;
-  top: 10%;
-  left: 44%;
+  border: 2px solid #e9e3ff;
+  width: 61%;       /* ขนาดเท่ากับ doctor */
+  height: 200px;    /* ขนาดเท่ากับ doctor */
+  top: 8%;         /* ตรงกับ doctor */
+  left: 19%;        /* เลื่อนขวา ให้ห่างจาก doctor */
 }
 
+.card.purple img {
+  width: 120px;   /* กำหนดความกว้าง */
+  height: 120px;  /* ให้สูงอัตโนมัติตามสัดส่วน */
+  object-fit: contain; /* ป้องกันภาพบิดเบี้ยว */
+}
+
+
 .card.dark {
-  background-color: #1e2b30;
-  color: #ffffff;
-  border: 2px solid #141e22;
+  background-color: #86b7a5;
+  color: #3a4a44;
+  border: 2px solid #86b7a5;
   width: 61%;
   height: 200px;
-  top: 35%;
+  top: 39%;         /* ตรงกับ appointment */
+  left: 19%;
+}
+
+.card.dark img {
+  width: 120px;   /* กำหนดความกว้าง */
+  height: 120px;  /* ให้สูงอัตโนมัติตามสัดส่วน */
+  object-fit: contain; /* ป้องกันภาพบิดเบี้ยว */
+}
+
+.card.list {
+  background-color: #698a97;
+  color: #30515e;
+  border: 2px solid #698a97;
+  width: 61%;
+  height: 200px;
+  top: 71%;         /* ตรงกับ appointment */
   left: 19%;
 }
 

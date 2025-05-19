@@ -13,7 +13,6 @@ export default function AppointmentPage() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // ✅ รับ userId ที่ส่งมาจากหน้าอื่น (ถ้าไม่มี fallback เป็น 1)
   const userId = location.state?.userId || 1;
 
   const [currentMonth, setCurrentMonth] = useState(dayjs());
@@ -21,14 +20,12 @@ export default function AppointmentPage() {
     dayjs().format("YYYY-MM-DD")
   );
   const [selectedTime, setSelectedTime] = useState("");
-  // const [selectedService, setSelectedService] = useState("");
   const [selectedDoctor, setSelectedDoctor] = useState("");
   const [step, setStep] = useState<
     "datetime" | "service" | "doctor" | "overview"
   >("datetime");
 
-  // const [services, setServices] = useState<string[]>([]);
-  const [doctors, setDoctors] = useState<string[]>([]);
+  const [doctors, setDoctors] = useState<{ id: number; name: string }[]>([]);
   const [availableTimes, setAvailableTimes] = useState<string[]>([]);
 
   const [services, setServices] = useState<ServiceTypeInterface[]>([]);
@@ -38,7 +35,7 @@ export default function AppointmentPage() {
   useEffect(() => {
     async function loadServices() {
       try {
-        const data = await fetchServiceTypes(); // [{ id, service_type }, ...]
+        const data = await fetchServiceTypes();
         setServices(data);
         if (!selectedService && data.length > 0) {
           setSelectedService(data[0]);
@@ -61,18 +58,23 @@ export default function AppointmentPage() {
     async function loadDoctors() {
       try {
         const data = await fetchDoctors();
-        const doctorNames = data.map(
-          (doc: any) => `${doc.first_name} ${doc.last_name}`
-        );
-        setDoctors(doctorNames);
-        if (doctorNames.length > 0 && !selectedDoctor) {
-          setSelectedDoctor(doctorNames[0]);
+        const doctorsWithId = data.map((doc: any) => ({
+          id: doc.id,
+          name: `${doc.first_name} ${doc.last_name}`,
+        }));
+        setDoctors(doctorsWithId);
+        if (doctorsWithId.length > 0 && !selectedDoctor) {
+          setSelectedDoctor(doctorsWithId[0].name);
         }
       } catch (err) {
         console.error(err);
-        const fallbackDoctors = ["นพ. สมชาย", "นพ. สมหญิง", "นพ. อภิวัฒน์"];
+        const fallbackDoctors = [
+          { id: 1, name: "นพ. สมชาย" },
+          { id: 2, name: "นพ. สมหญิง" },
+          { id: 3, name: "นพ. อภิวัฒน์" },
+        ];
         setDoctors(fallbackDoctors);
-        if (!selectedDoctor) setSelectedDoctor(fallbackDoctors[0]);
+        if (!selectedDoctor) setSelectedDoctor(fallbackDoctors[0].name);
       }
     }
     loadDoctors();
@@ -82,8 +84,21 @@ export default function AppointmentPage() {
     async function loadAvailableTimes() {
       if (step === "doctor" && selectedDoctor && selectedDate) {
         try {
-          const doctorId = doctors.indexOf(selectedDoctor) + 1;
+          const doctorObj = doctors.find((d) => d.name === selectedDoctor);
+          const doctorId = doctorObj?.id;
+
+          if (!doctorId) {
+            throw new Error("Doctor ID not found");
+          }
+
+          console.log(
+            "Fetching available times for doctorId:",
+            doctorId,
+            "date:",
+            selectedDate
+          );
           const data = await fetchAvailableTimes(doctorId, selectedDate);
+          console.log("Available times data:", data);
           setAvailableTimes(data.available_times || []);
           setSelectedTime("");
         } catch (error) {
@@ -124,15 +139,11 @@ export default function AppointmentPage() {
             <div className="title">New appointment</div>
             <div className="steps">
               <span className={step === "datetime" ? "active" : ""}>Date</span>
-              <span className={step === "service" ? "active" : ""}>
-                Service
-              </span>
+              <span className={step === "service" ? "active" : ""}>Service</span>
               <span className={step === "doctor" ? "active" : ""}>
                 Doctor & Time
               </span>
-              <span className={step === "overview" ? "active" : ""}>
-                Overview
-              </span>
+              <span className={step === "overview" ? "active" : ""}>Overview</span>
             </div>
 
             {step === "datetime" && (
@@ -143,11 +154,9 @@ export default function AppointmentPage() {
                   <button onClick={handleNextMonth}>&gt;</button>
                 </div>
                 <div className="calendar-header">
-                  {["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"].map(
-                    (d) => (
-                      <span key={d}>{d}</span>
-                    )
-                  )}
+                  {["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"].map((d) => (
+                    <span key={d}>{d}</span>
+                  ))}
                 </div>
                 <div className="calendar-grid">
                   {calendarDays.map((date, idx) => (
@@ -197,16 +206,10 @@ export default function AppointmentPage() {
                   ))}
                 </div>
                 <div className="nav-buttons">
-                  <button
-                    className="btn-back"
-                    onClick={() => setStep("datetime")}
-                  >
+                  <button className="btn-back" onClick={() => setStep("datetime")}>
                     Back
                   </button>
-                  <button
-                    className="btn-continue"
-                    onClick={() => setStep("doctor")}
-                  >
+                  <button className="btn-continue" onClick={() => setStep("doctor")}>
                     CONTINUE
                   </button>
                 </div>
@@ -218,13 +221,13 @@ export default function AppointmentPage() {
                 <div className="service-list">
                   {doctors.map((doctor) => (
                     <button
-                      key={doctor}
+                      key={doctor.id}
                       className={`service-button ${
-                        selectedDoctor === doctor ? "selected-service" : ""
+                        selectedDoctor === doctor.name ? "selected-service" : ""
                       }`}
-                      onClick={() => setSelectedDoctor(doctor)}
+                      onClick={() => setSelectedDoctor(doctor.name)}
                     >
-                      {doctor}
+                      {doctor.name}
                     </button>
                   ))}
                 </div>
@@ -250,10 +253,7 @@ export default function AppointmentPage() {
                   )}
                 </div>
                 <div className="nav-buttons">
-                  <button
-                    className="btn-back"
-                    onClick={() => setStep("service")}
-                  >
+                  <button className="btn-back" onClick={() => setStep("service")}>
                     Back
                   </button>
                   <button
@@ -286,10 +286,7 @@ export default function AppointmentPage() {
                   </p>
                 </div>
                 <div className="nav-buttons">
-                  <button
-                    className="btn-back"
-                    onClick={() => setStep("doctor")}
-                  >
+                  <button className="btn-back" onClick={() => setStep("doctor")}>
                     Back
                   </button>
                   <button
@@ -300,13 +297,19 @@ export default function AppointmentPage() {
                         const appointmentTimeStart =
                           selectedTime.split(" - ")[0];
 
+                        // หา doctorId จากชื่อหมอ
+                        const doctorObj = doctors.find(
+                          (d) => d.name === selectedDoctor
+                        );
+                        const doctorId = doctorObj?.id || 0;
+
                         const payload = {
                           appointment_date: appointmentDate,
                           appointment_time: appointmentTimeStart + ":00",
-                          user_id: parseInt(userId), // ใช้ userId จาก state
-                          servicetype_id: selectedService?.id, // ใช้ id จริงของ service
+                          user_id: parseInt(userId),
+                          servicetype_id: selectedService?.id,
                           status_id: 1,
-                          doctor_id: doctors.indexOf(selectedDoctor) + 1,
+                          doctor_id: doctorId,
                           doctor_name: selectedDoctor,
                           service_name: selectedService?.service_type,
                         };
