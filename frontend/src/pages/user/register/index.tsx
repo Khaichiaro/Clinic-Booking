@@ -17,6 +17,9 @@ export default function RegisterPage() {
     password: "",
     confirmPassword: "",
     phone: "",
+    weight: "",
+    height: "",
+    age: "",
     gender: "",
   });
 
@@ -50,8 +53,13 @@ export default function RegisterPage() {
 
   const isEmailValid = (email: string) =>
     /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-
   const isNameValid = (name: string) => /^[a-zA-Z\s]{2,100}$/.test(name);
+  const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/;
+  const phoneRegex = /^\d{10}$/;
+  const ageRegex = /^(?:0[1-9]|[1-9][0-9]|1[01][0-9]|120)$/;
+  const heightRegex = /^(?:[1-9]\d(?:\.\d+)?|1\d{2}(?:\.\d+)?|2[0-4]\d(?:\.\d+)?|250(?:\.0+)?)$/;
+  const weightRegex = /^(?:[1-9](?:\.\d+)?|[1-9]\d(?:\.\d+)?|1\d{2}(?:\.\d+)?|2\d{2}(?:\.\d+)?|300(?:\.0+)?)$/;
+
 
   const handleRegister = async () => {
     const {
@@ -61,6 +69,9 @@ export default function RegisterPage() {
       password,
       confirmPassword,
       phone,
+      weight,
+      height,
+      age,
       gender,
     } = form;
 
@@ -71,6 +82,9 @@ export default function RegisterPage() {
       !password ||
       !confirmPassword ||
       !phone ||
+      !weight ||
+      !height ||
+      !age ||
       !gender
     ) {
       message.warning("Please fill in all fields.");
@@ -86,8 +100,7 @@ export default function RegisterPage() {
       message.warning("Invalid email format.");
       return;
     }
-
-    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/;
+    
     if (!passwordRegex.test(password)) {
       message.warning(
         "Password must contain letters and numbers and be at least 6 characters."
@@ -100,9 +113,23 @@ export default function RegisterPage() {
       return;
     }
 
-    const phoneRegex = /^\d{10}$/;
     if (!phoneRegex.test(phone)) {
       message.warning("Phone number must be exactly 10 digits.");
+      return;
+    }
+
+    if (!ageRegex.test(age)) {
+      message.warning("Age must be between 0 and 120.");
+      return;
+    }
+
+    if (!heightRegex.test(height)) {
+      message.warning("Height must be between 1.0 and 250.9.");
+      return;
+    }
+
+    if (!weightRegex.test(weight)) {
+      message.warning("Weight must be between 1.0 and 300.9.");
       return;
     }
 
@@ -112,6 +139,9 @@ export default function RegisterPage() {
       email,
       password,
       phone_number: phone,
+      weight: Number(weight),
+      height: Number(height),
+      age: Number(age),
       gender_id: Number(gender),
     };
 
@@ -130,16 +160,18 @@ export default function RegisterPage() {
       <div className="register-card">
         <img src={Logo3} alt="logo" />
         <h2>Register</h2>
-        <input
-          placeholder="First Name"
-          name="first_name"
-          onChange={handleChange}
-        />
-        <input
-          placeholder="Last Name"
-          name="last_name"
-          onChange={handleChange}
-        />
+        <div className="name-row">
+          <input
+            placeholder="First Name"
+            name="first_name"
+            onChange={handleChange}
+          />
+          <input
+            placeholder="Last Name"
+            name="last_name"
+            onChange={handleChange}
+          />
+        </div>
         <input placeholder="Email" name="email" onChange={handleChange} />
         <input
           placeholder="Password"
@@ -154,6 +186,9 @@ export default function RegisterPage() {
           onChange={handleChange}
         />
         <input placeholder="Phone" name="phone" onChange={handleChange} />
+        <input placeholder="Age" name="age" onChange={handleChange} />
+        <input placeholder="Weight" name="weight" onChange={handleChange} />
+        <input placeholder="Height" name="height" onChange={handleChange} />
         <select name="gender" onChange={handleChange}>
           <option value="">-- Select Gender --</option>
           {genders.map((g) => (

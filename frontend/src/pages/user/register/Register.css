@@ -60,3 +60,12 @@
   height: 100vh; /* เต็มจอ */
   background-color: #cbf8ff;
 }
+
+.name-row {
+  display: flex;
+  gap: 10px;
+}
+
+.name-row input {
+  flex: 1;
+}
