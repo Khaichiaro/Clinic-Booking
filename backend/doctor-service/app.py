@@ -2,7 +2,7 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 from models import db, Doctor, Gender, DoctorSchedule, Appointment
 import os
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, time
 from prometheus_client import make_wsgi_app
 from werkzeug.middleware.dispatcher import DispatcherMiddleware
 from sqlalchemy.orm import joinedload
@@ -251,6 +251,50 @@ def get_appointments():
     except Exception as e:
         print("xxx ERROR [GET /appointments]:", e)
         return jsonify({"message": "Failed to get appointments", "data": None, "error": str(e)}), 500
+
+# ------------------------------------ 
+# Create Doctor Schedule  
+@app.route('/api/doctor/doctor_schedule/', methods=['POST'])
+def create_doctor_schedule():
+    try:
+        data = request.get_json(force=True)
+
+        doctor_id = data.get('doctor_id')
+        dates = data.get('dates')  # ควรเป็น list ของ string "YYYY-MM-DD"
+        start_time_str = data.get('start_time')  # เช่น "09:00"
+        end_time_str = data.get('end_time')      # เช่น "17:00"
+
+        # Validate input
+        if not doctor_id or not dates or not start_time_str or not end_time_str:
+            return jsonify({"error": "Missing required fields"}), 400
+
+        # แปลงเวลาเป็น datetime.time
+        start_time = datetime.strptime(start_time_str, "%H:%M").time()
+        end_time = datetime.strptime(end_time_str, "%H:%M").time()
+
+        # สร้างรายการ doctor schedules
+        schedules = []
+        for date_str in dates:
+            work_date = datetime.strptime(date_str, "%Y-%m-%d").date()
+            schedule = DoctorSchedule(
+                doctor_id=doctor_id,
+                work_date=work_date,
+                start_time=start_time,
+                end_time=end_time
+            )
+            schedules.append(schedule)
+
+        # เพิ่มข้อมูลลงฐานข้อมูล
+        db.session.add_all(schedules)
+        db.session.commit()
+
+        return jsonify({
+            "message": f"Created {len(schedules)} schedules for doctor {doctor_id}"
+        }), 201
+
+    except Exception as e:
+        print("Error creating doctor schedule:", e)
+        return jsonify({"error": str(e)}), 500
 
 # ------------------------------------
 if __name__ == '__main__':

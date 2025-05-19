@@ -1,6 +1,7 @@
 import axios from "axios";
 import type { DoctorInterface } from "../../interface/IDoctor";
 import type { GenderInterface } from "../../interface/IGender";
+import type { IDoctorSchedule } from "../../interface/IDoctorSchedule";
 
 const DOCTOR_API_BASE = "http://localhost/api";
 
@@ -54,3 +55,29 @@ export async function fetchAvailableTimes(doctorId: number, date: string) {
   console.log("Available times data:", data);
   return data;
 }
+
+export const createDoctorSchedule = async (
+  doctorId: number,
+  dates: string[], // Array ของวันที่ที่เลือก
+  startTime: string, // เวลาเริ่ม "HH:mm"
+  endTime: string // เวลาสิ้นสุด "HH:mm"
+) => {
+  try {
+    // เตรียมข้อมูลที่ต้องส่งไปยัง API
+    const scheduleData: IDoctorSchedule = {
+      doctor_id: doctorId,
+      dates: dates,
+      start_time: startTime,
+      end_time: endTime,
+    };
+
+    // ส่งข้อมูลไปยัง API
+    const response = await axios.post(`${DOCTOR_API_BASE}/doctor/doctor_schedule/`, scheduleData);
+    
+    // หาก API ส่งกลับข้อความสำเร็จ
+    return response.data;
+  } catch (error) {
+    console.error("Error creating doctor schedule:", error);
+    throw new Error("Failed to create doctor schedule");
+  }
+};

@@ -121,6 +121,10 @@ const DoctorAppointmentPage: React.FC = () => {
     navigate("/doctorlist");
   };
 
+  const goToDoctorSch = () => {
+    navigate("/doctorschedule");
+  };
+
   return (
     <div className={styles.container}>
       {/* Left Card */}
@@ -143,7 +147,7 @@ const DoctorAppointmentPage: React.FC = () => {
               <button className={styles.btn} onClick={goToDoctorList}>
                 DOCTOR
               </button>
-              <button className={styles.btn}>PATIENT</button>
+              <button className={styles.btn} onClick={goToDoctorSch}>ADD SCHEDULE</button>
             </div>
           </>
         ) : (
