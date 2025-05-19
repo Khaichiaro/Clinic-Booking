@@ -76,7 +76,25 @@
 }
 
 .adddoc .add-button:hover {
-  background-color: #333;
+  background-color: #36cc00;
+}
+
+.adddoc .back-button {
+  margin-top: 30px;
+  width: 120px;
+  align-self: center;
+  background-color: rgb(255, 255, 255);
+  color: rgb(0, 0, 0);
+  border-radius: 20px;
+  border: none;
+  padding: 10px 0;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.adddoc .back-button:hover {
+  background-color: #d20000;
 }
 
 .adddoc select {

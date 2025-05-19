@@ -5,6 +5,8 @@ import os
 from datetime import datetime, timedelta
 from prometheus_client import make_wsgi_app
 from werkzeug.middleware.dispatcher import DispatcherMiddleware
+from sqlalchemy.orm import joinedload
+
 
 
 app = Flask(__name__)
@@ -21,6 +23,30 @@ app.wsgi_app = DispatcherMiddleware(app.wsgi_app, {
 })
 
 # Routes
+# Helper: สร้าง dict จาก doctor object
+def doctor_to_dict(doctor):
+    return {
+        "id": doctor.id,
+        "password": doctor.password,
+        "first_name": doctor.first_name,
+        "last_name": doctor.last_name,
+        "email": doctor.email,
+        "phone_number": doctor.phone_number,
+        "gender_id": doctor.gender_id,
+        "gender": {
+            "id": doctor.gender.id,
+            "gender": doctor.gender.gender
+        } if doctor.gender else None
+    }
+
+def gender_to_dict(gender):
+    return {
+        "id": gender.id,
+        "gender": gender.gender
+    }
+
+# ------------------------------------ 
+# Get All Doctor
 @app.route('/api/doctors/', methods=['GET'])
 def get_doctors():
     try:
@@ -30,14 +56,30 @@ def get_doctors():
                 'id': d.id,
                 'first_name': d.first_name,
                 'last_name': d.last_name,
-                'email': d.email
+                'email': d.email,
+                'phone_number' : d.phone_number
             } for d in doctors
         ])
     except Exception as e:
         print("Error fetching doctors:", e)
         return jsonify({"error": str(e)}), 500
+    
+# ------------------------------------
+# Get One Doctor
+@app.route("/api/doctor/<int:doctor_id>/", methods=["GET"])
+def get_doctor(doctor_id):
+    try:
+        doctor = Doctor.query.options(joinedload(Doctor.gender)).get(doctor_id)
+        if not doctor:
+            return jsonify({"message": "Doctor not found", "data": None}), 404
+        return jsonify({"message": "Doctor found", "data": doctor_to_dict(doctor)})
+    except Exception as e:
+        print("xxx ERROR [GET /doctor/<id>]:", e)
+        return jsonify({"message": "Failed to get doctor", "data": None, "error": str(e)}), 500
 
-@app.route('/api/doctors/', methods=['POST'])
+# ------------------------------------ 
+# Create Doctor
+@app.route('/api/doctor/', methods=['POST'])
 def create_doctor():
     try:
         data = request.get_json(force=True)
@@ -51,33 +93,46 @@ def create_doctor():
         )
         db.session.add(doctor)
         db.session.commit()
-        return jsonify({"message": "Doctor created", "id": doctor.id}), 201
+        return jsonify({
+            "message": "Doctor created", 
+            "id": doctor.id
+        }), 201
     except Exception as e:
         print("Error creating doctor:", e)
-        return jsonify({"error": str(e)}), 500
+        return jsonify({"message": "Failed to create user", "data": None, "error": str(e)}), 500
 
-@app.route('/api/init_genders', methods=['POST'])
-def init_genders():
+
+# ------------------------------------
+# Delete Doctor
+@app.route("/api/doctor/<int:doctor_id>/", methods=["DELETE"])
+def delete_doctor(doctor_id):
     try:
-        default_genders = [
-            {"id": 1, "gender": "ชาย"},
-            {"id": 2, "gender": "หญิง"},
-            {"id": 3, "gender": "อื่น ๆ"},
-        ]
-
-        added = 0
-        for g in default_genders:
-            exists = Gender.query.get(g["id"])
-            if not exists:
-                new_gender = Gender(id=g["id"], gender=g["gender"])
-                db.session.add(new_gender)
-                added += 1
+        doctor = Doctor.query.get(doctor_id)
+        if not doctor:
+            return jsonify({"message": "Doctor not found", "data": None}), 404
+        db.session.delete(doctor)
         db.session.commit()
-        return jsonify({"message": f"{added} genders added or already exist."}), 201
+        return jsonify({"message": "Doctor deleted", "data": {"id": doctor_id}})
     except Exception as e:
-        print("Error initializing genders:", e)
-        return jsonify({"error": str(e)}), 500
+        print("xxx ERROR [DELETE /doctor/<id>]:", e)
+        return jsonify({"message": "Failed to delete doctor", "data": None, "error": str(e)}), 500
+    
+# ------------------------------------
+# Get All Genders
+@app.route("/api/genders/", methods=["GET"])
+def get_genders():
+    try:
+        genders = Gender.query.order_by(Gender.id.asc()).all()
+        return jsonify({
+            "message": "All genders",
+            "data": [gender_to_dict(g) for g in genders]
+        })
+    except Exception as e:
+        print("xxx ERROR [GET /genders]:", e)
+        return jsonify({"message": "Failed to get genders", "data": None, "error": str(e)}), 500
 
+# ------------------------------------
+# Available Appointment Slots For A Doctor
 @app.route('/api/doctor/<int:doctor_id>/available_times/', methods=['GET'])
 def get_doctor_available_times(doctor_id):
     date_str = request.args.get('date')
@@ -128,6 +183,7 @@ def get_doctor_available_times(doctor_id):
 
     return jsonify({"available_times": available_slots})
 
+# ------------------------------------
 if __name__ == '__main__':
     with app.app_context():
         print("Creating tables...")

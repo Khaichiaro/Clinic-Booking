@@ -1,8 +1,14 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./AddDoctor.css";
 import doca from "../../assets/doca.png";
+import type { GenderInterface } from "../../interface/IGender";
+import { createDoctor, getAllGenders } from "../../service/http/doctor";
+import type { DoctorInterface } from "../../interface/IDoctor";
+import { useNavigate } from "react-router-dom";
 
 const AddDoctor: React.FC = () => {
+  const navigate = useNavigate();
+
   const [form, setForm] = useState({
     firstName: "",
     lastName: "",
@@ -12,17 +18,54 @@ const AddDoctor: React.FC = () => {
     gender: "",
   });
 
+  const [genders, setGenders] = useState<GenderInterface[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const data = await getAllGenders();
+        setGenders(data);
+        setError(null);
+      } catch (err: any) {
+        console.error("Failed to load genders:", err);
+        setError(err.message || "Failed to load genders");
+      } finally {
+        setLoading(false);
+      }
+    })();
+  }, []);
+
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleAdd = () => {
-    // ตัวอย่าง: แสดงข้อมูลตอนกด add
-    alert(JSON.stringify(form, null, 2));
-    // TODO: เพิ่ม logic ส่งข้อมูล server หรืออื่นๆ
+  const handleAdd = async () => {
+    const newDoctor: DoctorInterface = {
+      first_name: form.firstName,
+      last_name: form.lastName,
+      phone_number: form.phoneNumber,
+      email: form.email,
+      password: form.password,
+      gender_id: Number(form.gender),
+    };
+
+    try {
+      const res = await createDoctor(newDoctor);
+      alert("Created doctor successfully!");
+      navigate("/doctorlist");
+      console.log(res);
+    } catch (err: any) {
+      console.error("Failed to create doctor:", err);
+      alert("Failed to create doctor: " + (err.message || "Unknown error"));
+    }
   };
+
+  if (loading) return <p>Loading genders...</p>;
+  if (error) return <p style={{ color: "red" }}>{error}</p>;
 
   return (
     <div className="adddoc">
@@ -94,15 +137,29 @@ const AddDoctor: React.FC = () => {
                 onChange={handleChange}
               >
                 <option value="">Select gender</option>
-                <option value="male">Male</option>
-                <option value="female">Female</option>
-                <option value="other">Other</option>
+                {genders.map((g) => (
+                  <option key={g.gender} value={g.id}>
+                    {g.gender}
+                  </option>
+                ))}
               </select>
             </div>
           </div>
-          <button className="add-button" onClick={handleAdd}>
-            ADD
-          </button>
+          <div
+            style={{
+              display: "flex",
+              gap: "20px",
+              marginTop: "1rem",
+              justifyContent: "flex-end",
+            }}
+          >
+            <button className="back-button" onClick={() => navigate("/doctorlist")}>
+              CANCLE
+            </button>
+            <button className="add-button" onClick={handleAdd}>
+              ADD
+            </button>
+          </div>
         </div>
       </div>
     </div>
