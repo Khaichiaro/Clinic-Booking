@@ -3,7 +3,7 @@ pipeline {
 
   environment {
     COMPOSE_FILE = 'compose.yml'
-    DOCKER_BUILDKIT = '0'    // ✅ บังคับไม่ใช้ BuildKit (เพื่อลด error 403)
+    DOCKER_BUILDKIT = '0'    // ไม่ใช้ BuildKit (เพื่อลด error 403)
     TARGET_SERVICES = 'frontend user-service doctor-service appointment-service'
   }
 
@@ -43,7 +43,6 @@ pipeline {
         echo '🚀 Starting containers...'
         dir('Clinic-Booking') {
             sh "docker compose -f $COMPOSE_FILE up -d $TARGET_SERVICES"
-            sh 'docker image prune -f'
         }
       }
     }
@@ -56,9 +55,9 @@ pipeline {
     failure {
       echo '❌ Deployment failed!'
     }
-    always {
-      echo '🧹 Post-cleaning Docker environment...'
-      sh 'docker image prune -f --filter "dangling=true"'
-    }
+    // always {
+    //   echo '🧹 Post-cleaning Docker environment...'
+    //   sh 'docker image prune -f --filter "dangling=true"'
+    // }
   }
 }
