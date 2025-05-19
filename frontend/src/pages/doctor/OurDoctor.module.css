@@ -1,0 +1,61 @@
+.ourdoctor-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 30px;
+  padding: 20px;
+  background-color: #ffffff;
+}
+
+.ourdoctor-card {
+  border-radius: 12px;
+  padding: 30px 20px;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  transition: transform 0.3s ease;
+}
+
+.ourdoctor-card:hover {
+  transform: translateY(-6px);
+}
+
+.ourdoctor-card-odd {
+  background-color: #c1efff; /* สีฟ้า สำหรับเลขคี่ */
+}
+
+.ourdoctor-card-even {
+  background-color: #d7c6ff; /* สีม่วง สำหรับเลขคู่ */
+}
+
+.ourdoctor-image {
+  width: 140px;
+  margin-bottom: 20px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.ourdoctor-name {
+  font-weight: bold;
+  font-size: 22px;
+  color: #333;
+}
+
+.ourdoctor-loading,
+.ourdoctor-error {
+  text-align: center;
+  font-size: 18px;
+  color: #555;
+  margin-top: 30px;
+}
+
+/* Responsive สำหรับจอเล็ก */
+@media (max-width: 900px) {
+  .ourdoctor-container {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .ourdoctor-container {
+    grid-template-columns: 1fr;
+  }
+}

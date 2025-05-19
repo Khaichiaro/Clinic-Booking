@@ -52,16 +52,24 @@ def gender_to_dict(gender):
 @app.route('/api/doctors/', methods=['GET'])
 def get_doctors():
     try:
-        doctors = Doctor.query.all()
-        return jsonify([
-            {
-                'id': d.id,
-                'first_name': d.first_name,
-                'last_name': d.last_name,
-                'email': d.email,
-                'phone_number' : d.phone_number
-            } for d in doctors
-        ])
+        doctors = Doctor.query.options(joinedload(Doctor.gender)).all()
+        result = []
+        for doctor in doctors:
+            doctor_dict = {
+                "id": doctor.id,
+                "password": doctor.password,
+                "first_name": doctor.first_name,
+                "last_name": doctor.last_name,
+                "email": doctor.email,
+                "phone_number": doctor.phone_number,
+                "gender_id": doctor.gender_id,
+                "gender": {
+                    "id": doctor.gender.id,
+                    "gender": doctor.gender.gender
+                } if doctor.gender else None
+            }
+            result.append(doctor_dict)
+        return jsonify(result)
     except Exception as e:
         print("Error fetching doctors:", e)
         return jsonify({"error": str(e)}), 500
