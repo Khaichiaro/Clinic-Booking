@@ -96,3 +96,19 @@
 .dl .new-doctor-btn:hover {
   background-color: #111;
 }
+
+.dl .back-button {
+  margin-top: 100px;
+  background-color: #ffffff;
+  color: rgb(0, 0, 0);
+  border: none;
+  padding: 10px 18px;
+  border-radius: 15px;
+  font-size: 14px;
+  cursor: pointer;
+  float: right;
+}
+
+.dl .back-button:hover {
+  background-color: #4c4c4c;
+}
