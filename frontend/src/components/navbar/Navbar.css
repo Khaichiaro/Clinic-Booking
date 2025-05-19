@@ -8,6 +8,12 @@
   z-index: 1;
 }
 
+.nav-logo-group {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
 .nav-logo {
   height: 60px;
   cursor: pointer;
@@ -18,6 +24,11 @@
   transform: scale(1.5) rotate(360deg);
 }
 
+.clinic-name {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #1e2b30;
+}
 
 .nav-button {
   background-color: #1e2b30;
@@ -32,6 +43,27 @@
 
 .nav-button:hover {
   background-color: #2f3f44;
-  transition: all 0.2s;
-  scale: 1.05;
+  scale: 1.0
 }
+
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.nav-user-icon {
+  height: 36px;
+  width: 36px;
+  border-radius: 50%;
+  background-color: white;
+  padding: 4px;
+  border: 2px solid #1e2b30;
+  cursor: pointer;
+  transition: transform 0.2s ease-in-out;
+}
+
+.nav-user-icon:hover {
+  transform: scale(1.1);
+}
+

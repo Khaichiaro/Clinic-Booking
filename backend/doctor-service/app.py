@@ -10,7 +10,8 @@ from sqlalchemy.orm import joinedload
 
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, resources={r"/api/*": {"origins": "*"}})
+
 
 # Database config
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv("DATABASE_URL", "postgresql://admin:1234@db:5432/mydb")
@@ -144,15 +145,24 @@ def get_doctor_available_times(doctor_id):
     except ValueError:
         return jsonify({"error": "Invalid date format, expected YYYY-MM-DD"}), 400
 
-    # ตัวอย่าง: query ตาราง DoctorSchedule
+    print(f"Fetching available times for doctorId: {doctor_id} date: {work_date}")  # debug
+
+    # query ตาราง DoctorSchedule
     schedules = DoctorSchedule.query.filter_by(doctor_id=doctor_id, work_date=work_date).all()
+    print(f"Doctor schedules found: {len(schedules)}")
+    for s in schedules:
+        print(f"  Schedule: {s.start_time} - {s.end_time}")
+
     if not schedules:
         return jsonify({"available_times": []})  # ไม่มีเวลาทำงานวันนั้น
 
-    # query นัดหมายที่จองแล้วในวันนั้น (status_id != 4 = Cancelled สมมติ)
+    # query นัดหมายที่จองแล้วในวันนั้น (status_id != 4 = Cancelled)
     booked_appointments = Appointment.query.filter_by(doctor_id=doctor_id, appointment_date=work_date).filter(
         Appointment.status_id != 4
     ).all()
+    print(f"Booked appointments found: {len(booked_appointments)}")
+    for appt in booked_appointments:
+        print(f"  Appointment time: {appt.appointment_time} status_id: {appt.status_id}")
 
     def is_overlap(start1, end1, start2, end2):
         return max(start1, start2) < min(end1, end2)
@@ -180,6 +190,8 @@ def get_doctor_available_times(doctor_id):
                 available_slots.append(time_str)
 
             slot_start = slot_finish
+
+    print(f"Available slots: {available_slots}")  # debug
 
     return jsonify({"available_times": available_slots})
 

@@ -3,6 +3,10 @@ import Navbar from "../../../components/navbar/Navbar";
 import "./Home.css";
 import Slide1 from "../../../assets/slide1.png";
 import Slide2 from "../../../assets/slide2.png";
+import iapp from "../../../assets/iapp.png"; 
+import appointment from "../../../assets/appointment.png"; 
+import doctor from "../../../assets/doctorg.png"; 
+
 
 import User1 from "../../../assets/user1.svg";
 import Calendar from "../../../assets/calendar.svg";
@@ -20,14 +24,14 @@ const Home = () => {
 
   const banners = [
   {
-    image: Slide1, // หรือ path จาก public folder
-    title: "ฟันขาวใส สบายกระเป๋า!",
-    description: "รับส่วนลด 20% สำหรับการฟอกฟันขาวทั้งเดือนนี้!",
+    image: Slide1, // or path from public folder
+    title: "Bright Teeth, Light on Your Wallet!",
+    description: "Get 20% off teeth whitening all month long!",
   },
   {
     image: Slide2,
-    title: "ตรวจสุขภาพช่องปากฟรี",
-    description: "ฟรี! สำหรับผู้ที่ลงทะเบียนล่วงหน้า 100 คนแรก",
+    title: "Free Oral Health Checkup",
+    description: "Free for the first 100 people who register in advance",
   },
   // {
   //   image: "/images/banner3.png",
@@ -92,29 +96,31 @@ const Home = () => {
       )}
 
       <div className={`home-container ${!isLoggedIn ? "disabled" : ""}`}>
-        <div
-          className="card light"
-          onClick={() => isLoggedIn && navigate("/info")}
-        >
-          <img src={User1} alt="user" />
-          <div>Your info</div>
-        </div>
-
+       
         <div
           className="card purple"
           onClick={() => isLoggedIn && navigate("/appointments", { state: { userId: token } })}
         >
-          <img src={Calendar} alt="calendar" />
-          <div>Appointment</div>
+          <img src={appointment} alt="calendar" />
+          <div>APPOINTMENT</div>
         </div>
 
         <div
           className="card dark"
           onClick={() => isLoggedIn && navigate("/doctorlist")}
         >
-          <img src={Doctor1} alt="doctor" />
-          <div>Doctor</div>
+          <img src={doctor} alt="doctor" />
+          <div>DOCTOR</div>
         </div>
+
+        <div
+          className="card list"
+          onClick={() => isLoggedIn && navigate("/my-appointments", { state: { userId: token } })}
+        >
+          <img src={iapp} alt="calendar" />
+          <div>MY APPOINTMENTS</div>
+        </div>
+
       </div>
     </div>
   );

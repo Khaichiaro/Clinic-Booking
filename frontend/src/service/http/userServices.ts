@@ -5,7 +5,7 @@ import type { GenderInterface } from "../../interface/IGender";
 const API_BASE = "http://localhost/api";
 
 export const getAllUsers = async (): Promise<UserInterface[]> => {
-  const res = await axios.get(`${API_BASE}/users//`);
+  const res = await axios.get(`${API_BASE}/users/`);
   return res.data.data;
 };
 
