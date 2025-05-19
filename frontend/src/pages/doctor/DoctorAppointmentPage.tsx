@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import styles from "./DoctorAppointmentPage.module.css";
 import { useNavigate } from "react-router-dom";
 import { getDoctorById } from "../../service/http/doctor";
-import { fetchAppointments } from "../../service/http/appointment";
+import { fetchAppointments } from "../../service/http/doctor"; // เปลี่ยน import จาก service Doctor.ts
 
 import doctorImg from "../../assets/doctorg.png"; // หมอ (หญิง)
 import doctorm from "../../assets/doctorm.png"; // หมอ (ชาย)
@@ -35,13 +35,10 @@ const DoctorAppointmentPage: React.FC = () => {
 
   // โหลดข้อมูลนัดทั้งหมดและกรองเฉพาะของหมอคนนี้
   useEffect(() => {
-    fetchAppointments()
+    fetchAppointments(doctorId)  // ส่ง doctorId เข้าไปเลย ให้ backend กรองให้
       .then((allAppointments: AppointmentInterface[]) => {
         console.log("Appointments from API:", allAppointments);
-        const filtered = allAppointments.filter(
-          (app) => app.doctor_id === doctorId
-        );
-        setAppointments(filtered);
+        setAppointments(allAppointments);
       })
       .catch(console.error);
   }, [doctorId]);
@@ -66,10 +63,29 @@ const DoctorAppointmentPage: React.FC = () => {
     return dates;
   };
 
-  // กรองนัดเฉพาะวันที่เลือก โดยใช้ appointment_date
+  // กรองนัดเฉพาะวันที่เลือก และเฉพาะ status Confirmed หรือ Completed
   const filteredAppointmentsByDate = appointments.filter(
-    (app) => app.appointment_date === selectedDate
+    (app) =>
+      app.appointment_date === selectedDate &&
+      (app.status?.status === "Confirmed" || app.status?.status === "Completed")
   );
+
+  // ฟังก์ชันแปลงเวลา HH:MM:SS เป็น HH:MM
+  const formatTimeHM = (timeStr?: string) => {
+    if (!timeStr) return "";
+    const parts = timeStr.split(":");
+    if (parts.length >= 2) {
+      return `${parts[0]}:${parts[1]}`;
+    }
+    return timeStr;
+  };
+
+  // ฟังก์ชันแสดงอิโมจิตามสถานะ
+  const getStatusEmoji = (status?: string) => {
+    if (status === "Confirmed") return "⏳"; // นาฬิกาทราย
+    if (status === "Completed") return "✔️"; // ติ๊กถูก
+    return "";
+  };
 
   // กำหนดรูปหมอตาม gender_id
   const getDoctorImage = (genderId: number) => {
@@ -264,7 +280,7 @@ const DoctorAppointmentPage: React.FC = () => {
                 color: "#203864",
               }}
             >
-              {app.appointment_time}
+              {formatTimeHM(app.appointment_time)}
             </div>
             <img
               src={getPatientAvatar(app.user?.gender_id)}
@@ -304,7 +320,7 @@ const DoctorAppointmentPage: React.FC = () => {
                   fontStyle: "italic",
                 }}
               >
-                {app.status?.status ?? ""}
+                {getStatusEmoji(app.status?.status)} {app.status?.status ?? ""}
               </div>
             </div>
           </div>
@@ -315,3 +331,10 @@ const DoctorAppointmentPage: React.FC = () => {
 };
 
 export default DoctorAppointmentPage;
+
+// ฟังก์ชันแสดงอิโมจิตามสถานะ
+function getStatusEmoji(status?: string) {
+  if (status === "Confirmed") return "⏳"; // นาฬิกาทราย
+  if (status === "Completed") return "✔️"; // ติ๊กถูก
+  return "";
+}
