@@ -3,14 +3,15 @@ services:
   frontend:
     container_name: frontend
     build: ./frontend
+    image: clinic-booking/frontend
     ports:
       - "5173:5173"
     networks:
       - frontend
     restart: unless-stopped
-    volumes:
-      - ./frontend:/app
-      - /app/node_modules
+    # volumes:
+    #   - ${PWD}/frontend:/app
+    #   - /app/node_modules
     depends_on:
       - user-service
       - doctor-service
@@ -19,6 +20,7 @@ services:
   user-service:
     container_name: user-service
     build: ./backend/user-service
+    image: clinic-booking/user-service
     ports:
       - "5001:5001"    # Main API
     environment:
@@ -32,6 +34,7 @@ services:
   doctor-service:
     container_name: doctor-service
     build: ./backend/doctor-service
+    image: clinic-booking/doctor-service
     ports:
       - "5002:5002"   # Main API
     environment:
@@ -45,6 +48,7 @@ services:
   appointment-service:
     container_name: appointment-service
     build: ./backend/appointment-service
+    image: clinic-booking/appointment-service
     ports:
       - "5003:5003"   # Main API
     environment:

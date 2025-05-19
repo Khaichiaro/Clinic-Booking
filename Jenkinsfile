@@ -4,7 +4,7 @@ pipeline {
   environment {
     COMPOSE_FILE = 'compose.yml'
     DOCKER_BUILDKIT = '0'    // ✅ บังคับไม่ใช้ BuildKit (เพื่อลด error 403)
-    TARGET_SERVICES = 'frontend db user-service doctor-service appointment-service'
+    TARGET_SERVICES = 'frontend user-service doctor-service appointment-service'
   }
 
 
@@ -33,7 +33,7 @@ pipeline {
       steps {
         echo '🏗️ Building containers...'
         dir('Clinic-Booking') {
-            sh "docker compose -f $COMPOSE_FILE build $TARGET_SERVICES --no-cache"
+            sh "docker compose -f $COMPOSE_FILE build $TARGET_SERVICES"
         }
       }
     }
@@ -43,6 +43,7 @@ pipeline {
         echo '🚀 Starting containers...'
         dir('Clinic-Booking') {
             sh "docker compose -f $COMPOSE_FILE up -d $TARGET_SERVICES"
+            sh 'docker image prune -f'
         }
       }
     }
