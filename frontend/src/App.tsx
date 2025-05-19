@@ -13,6 +13,7 @@ import DoctorAppointmentPage from "./pages/doctor/DoctorAppointmentPage";
 import AddDoctor from "./pages/doctor/AddDoctor";
 import DoctorList from "./pages/doctor/DoctorList";
 import OurDoctor from "./pages/doctor/OurDoctor";
+import DoctorSchedule from "./pages/doctor/DoctorSchedule";
 
 function App() {
   if (
@@ -37,6 +38,7 @@ function App() {
           <Route path="/adddoctor" element={<AddDoctor />} />
           <Route path="/doctorlist" element={<DoctorList />} />
           <Route path="/ourdoctors" element={<OurDoctor />} />
+          <Route path="/doctorschedule" element={<DoctorSchedule />} />
 
         </Routes>
       </div>
