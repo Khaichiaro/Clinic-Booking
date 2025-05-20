@@ -53,6 +53,7 @@ const AddDoctor: React.FC = () => {
       gender_id: Number(form.gender),
     };
 
+    
     try {
       const res = await createDoctor(newDoctor);
       alert("Created doctor successfully!");

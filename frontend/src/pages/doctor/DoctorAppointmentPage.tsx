@@ -23,7 +23,12 @@ const DoctorAppointmentPage: React.FC = () => {
     new Date().toISOString().slice(0, 10)
   );
   const navigate = useNavigate();
-  const doctorId = 1; // กำหนด doctorId
+  const doctorId = Number(localStorage.getItem("doctorId"));
+  if (doctorId) {
+    console.log("Doctor ID:", doctorId);
+  } else {
+    console.log("No doctorId found in localStorage");
+  }
 
   // ref เก็บกล่องวันที่แต่ละอัน
   const dateRefs = useRef<Record<string, HTMLDivElement | null>>({});
@@ -35,7 +40,7 @@ const DoctorAppointmentPage: React.FC = () => {
 
   // โหลดข้อมูลนัดทั้งหมดและกรองเฉพาะของหมอคนนี้
   useEffect(() => {
-    fetchAppointments(doctorId)  // ส่ง doctorId เข้าไปเลย ให้ backend กรองให้
+    fetchAppointments(doctorId) // ส่ง doctorId เข้าไปเลย ให้ backend กรองให้
       .then((allAppointments: AppointmentInterface[]) => {
         console.log("Appointments from API:", allAppointments);
         setAppointments(allAppointments);
@@ -47,7 +52,11 @@ const DoctorAppointmentPage: React.FC = () => {
   useEffect(() => {
     const el = dateRefs.current[selectedDate];
     if (el) {
-      el.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
+      el.scrollIntoView({
+        behavior: "smooth",
+        inline: "center",
+        block: "nearest",
+      });
     }
   }, [selectedDate]);
 
@@ -67,7 +76,7 @@ const DoctorAppointmentPage: React.FC = () => {
   const filteredAppointmentsByDate = appointments.filter(
     (app) =>
       app.appointment_date === selectedDate &&
-      (app.status?.status === "Confirmed" || app.status?.status === "Completed")
+      (app.status?.status === "Pending" || app.status?.status === "Cancelled")
   );
 
   // ฟังก์ชันแปลงเวลา HH:MM:SS เป็น HH:MM
@@ -82,8 +91,8 @@ const DoctorAppointmentPage: React.FC = () => {
 
   // ฟังก์ชันแสดงอิโมจิตามสถานะ
   const getStatusEmoji = (status?: string) => {
-    if (status === "Confirmed") return "⏳"; // นาฬิกาทราย
-    if (status === "Completed") return "✔️"; // ติ๊กถูก
+    if (status === "Pending") return "⏳"; // นาฬิกาทราย
+    if (status === "Cancelled") return "❌"; // ติ๊กถูก
     return "";
   };
 
@@ -125,6 +134,11 @@ const DoctorAppointmentPage: React.FC = () => {
     navigate("/doctorschedule");
   };
 
+  const handleLogout = () => {
+    localStorage.clear(); // หรือลบเฉพาะ key ที่ต้องการ
+    navigate("/");
+  };
+
   return (
     <div className={styles.container}>
       {/* Left Card */}
@@ -147,7 +161,9 @@ const DoctorAppointmentPage: React.FC = () => {
               <button className={styles.btn} onClick={goToDoctorList}>
                 DOCTOR
               </button>
-              <button className={styles.btn} onClick={goToDoctorSch}>ADD SCHEDULE</button>
+              <button className={styles.btn} onClick={goToDoctorSch}>
+                ADD SCHEDULE
+              </button>
             </div>
           </>
         ) : (
@@ -330,6 +346,12 @@ const DoctorAppointmentPage: React.FC = () => {
           </div>
         ))}
       </div>
+       {/* ปุ่ม Logout */}
+          <div style={{ marginTop: "auto" }}>
+            <button className={styles.btn} onClick={handleLogout}>
+              LOGOUT
+            </button>
+          </div>
     </div>
   );
 };
