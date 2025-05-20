@@ -2,6 +2,7 @@ import "./Login.css";
 import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { getAllUsers } from "../../../service/http/userServices";
+import { getDoctors } from "../../../service/http/doctor"; // เพิ่มการนำเข้า getDoctors
 import Logo3 from "../../../assets/logo3.svg";
 import { message, Spin } from "antd";
 
@@ -11,12 +12,7 @@ export default function LoginPage() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
 
-  // const handletest = async () => {
-  //   message.success("Login successful", 4);
-  //   console.log("test");
-  // };
-
-    useEffect(() => {
+  useEffect(() => {
     // Delay แสดงผล 0.5 วิ
     setTimeout(() => {
       setLoading(false);
@@ -30,20 +26,27 @@ export default function LoginPage() {
       </div>
     );
   }
-  
+
   const handleLogin = async () => {
-    // localStorage.setItem("userId", "9");
     if (!email || !password) {
       message.error("Please enter email and password");
       return;
     }
 
     try {
+      // ดึงข้อมูลผู้ใช้ทั่วไป
       const users = await getAllUsers();
       const user = users.find(
         (u: any) => u.email === email && u.password === password
       );
+      
+      // ดึงข้อมูลหมอ
+      const doctors = await getDoctors();
+      const doctor = doctors.find(
+        (d: any) => d.email === email && d.password === password
+      );
 
+      // หากพบผู้ใช้ทั่วไป
       if (user) {
         if (user?.id !== undefined) {
           localStorage.setItem("userId", user.id.toString());
@@ -55,9 +58,31 @@ export default function LoginPage() {
         } else {
           console.error("User email is undefined");
         }
+
         message.success("Login successful");
-        navigate("/");
+
+        // เช็คว่าเป็นหมอหรือไม่
+        if (doctor) {
+          if (doctor?.id !== undefined) {
+            localStorage.setItem("doctorId", doctor.id.toString());
+            navigate("/doctor");
+          } else {
+            console.error("Doctor ID is undefined");
+          }
+        } else {
+          // หากไม่พบหมอ ให้ไปที่หน้าอื่น ๆ
+          navigate("/");
+        }
+      } else if (doctor) {
+        // หากเป็นหมอและไม่พบผู้ใช้ทั่วไป
+        if (doctor?.id !== undefined) {
+          localStorage.setItem("doctorId", doctor.id.toString());
+          navigate("/doctor");
+        } else {
+          console.error("Doctor ID is undefined");
+        }
       } else {
+        // หากไม่พบผู้ใช้ทั่วไปหรือหมอ
         message.error("Invalid email or password");
       }
     } catch (err) {
@@ -84,8 +109,6 @@ export default function LoginPage() {
           onChange={(e) => setPassword(e.target.value)}
         />
         <button className="login-button" onClick={handleLogin}>Login</button>
-        {/* <button onClick={handletest}>Test</button> */}
-
         <p style={{ marginTop: "10%" }}>
           Don't have an account? <Link to="/register">Register</Link>
         </p>
