@@ -8,7 +8,7 @@ _An Online Appointment Booking System for Improving Service Efficiency in Medica
 ## 📝 Project Description
 
 Brief summary of the project:
-- What does it do?<br>
+- What does it do? 0000<br>
 _It is a web-based application that allows patients to book, manage, and cancel appointments with doctors online. The system is easy to use for both patients and doctors, helping to reduce the need for traditional manual booking._
 - Why did you build it?<br>
   _The system was developed to solve common problems in clinics such as overlapping appointments, long waiting times, and the administrative burden on doctors. By adopting a digital approach, the system improves operational efficiency._
