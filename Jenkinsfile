@@ -4,7 +4,7 @@ pipeline {
   environment {
     COMPOSE_FILE = 'compose.yml'
     DOCKER_BUILDKIT = '0'    // ไม่ใช้ BuildKit (เพื่อลด error 403)
-    TARGET_SERVICES = 'frontend user-service doctor-service appointment-service'
+    TARGET_SERVICES = 'frontend user-service doctor-service appointment-service api-gateway'
   }
 
 

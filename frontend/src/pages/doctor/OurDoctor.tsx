@@ -6,6 +6,7 @@ import doctorImg from "../../assets/doctorg.png"; // หมอหญิง
 import doctorm from "../../assets/doctorm.png"; // หมอชาย
 
 import styles from "./OurDoctor.module.css";
+import Navbar from "../../components/navbar/Navbar";
 
 const OurDoctor: React.FC = () => {
   const [doctors, setDoctors] = useState<DoctorInterface[]>([]);
@@ -22,7 +23,8 @@ const OurDoctor: React.FC = () => {
       .finally(() => setLoading(false));
   }, []);
 
-  if (loading) return <p className={styles["ourdoctor-loading"]}>Loading doctors...</p>;
+  if (loading)
+    return <p className={styles["ourdoctor-loading"]}>Loading doctors...</p>;
   if (error) return <p className={styles["ourdoctor-error"]}>{error}</p>;
 
   const getDoctorImage = (genderId?: number) => {
@@ -32,25 +34,30 @@ const OurDoctor: React.FC = () => {
   };
 
   return (
-    <div className={styles["ourdoctor-container"]}>
-      {doctors.map((doctor, idx) => (
-        <div
-          key={doctor.id}
-          className={`${styles["ourdoctor-card"]} ${
-            idx % 2 === 0 ? styles["ourdoctor-card-even"] : styles["ourdoctor-card-odd"]
-          }`}
-        >
-          <img
-            src={getDoctorImage(doctor.gender_id)}
-            alt="Doctor"
-            className={styles["ourdoctor-image"]}
-          />
-          <div className={styles["ourdoctor-name"]}>
-            {doctor.first_name} {doctor.last_name}
+    <>
+      <Navbar />
+      <div className={styles["ourdoctor-container"]}>
+        {doctors.map((doctor, idx) => (
+          <div
+            key={doctor.id}
+            className={`${styles["ourdoctor-card"]} ${
+              idx % 2 === 0
+                ? styles["ourdoctor-card-even"]
+                : styles["ourdoctor-card-odd"]
+            }`}
+          >
+            <img
+              src={getDoctorImage(doctor.gender_id)}
+              alt="Doctor"
+              className={styles["ourdoctor-image"]}
+            />
+            <div className={styles["ourdoctor-name"]}>
+              {doctor.first_name} {doctor.last_name}
+            </div>
           </div>
-        </div>
-      ))}
-    </div>
+        ))}
+      </div>
+    </>
   );
 };
 
