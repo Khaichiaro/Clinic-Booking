@@ -4,7 +4,7 @@ import "./Home.css";
 import Slide1 from "../../../assets/slide1.png";
 import Slide2 from "../../../assets/slide2.png";
 import iapp from "../../../assets/iapp.png"; 
-import appointment from "../../../assets/appointment.png";
+import appointment from "../../../assets/appointments.png";
 import doctor from "../../../assets/doctorg.png"; 
 
 import { useEffect, useState } from "react";
@@ -50,14 +50,6 @@ const Home = () => {
   return (
     <div>
       <Navbar />
-      {/* <Carousel autoplay className="carousel-container">
-        <div>
-          <img className="carousel-image1" src={Slide1} alt="promo1" />
-        </div>
-        <div>
-          <img className="carousel-image1" src={Slide2} alt="promo2" />
-        </div>
-      </Carousel> */}
       <Carousel autoplay>
         {banners.map((banner, index) => (
           <div className="carousel-slide" key={index}>
