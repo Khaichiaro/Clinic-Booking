@@ -160,7 +160,7 @@ services:
   reverse-proxy:
     build: ./reverse-proxy
     container_name: reverse-proxy
-    restart: unless-stopped
+    restart: always
     networks:
       - frontend
       - backend
