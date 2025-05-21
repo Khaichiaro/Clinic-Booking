@@ -144,7 +144,7 @@ services:
   api-gateway:
     build: ./api-gateway
     container_name: api-gateway
-    restart: unless-stopped
+    restart: always
     networks:
       - backend
     ports:
