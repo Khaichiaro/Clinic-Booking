@@ -26,7 +26,7 @@ export const deleteDoctor = async (id: number) => {
 };
 
 export const getAllGenders = async (): Promise<GenderInterface[]> => {
-  const res = await axios.get(`${DOCTOR_API_BASE}/genders/`);
+  const res = await axios.get(`${DOCTOR_API_BASE}/doctor-genders/`);
   return res.data.data;
 };
 

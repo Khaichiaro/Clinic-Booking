@@ -8,6 +8,7 @@ import {
 } from "../../service/http/appointment";
 import { fetchDoctors, fetchAvailableTimes } from "../../service/http/doctor";
 import type { ServiceTypeInterface } from "../../interface/IAppointment";
+import Navbar from "../../components/navbar/Navbar";
 
 export default function AppointmentPage() {
   const navigate = useNavigate();
@@ -132,216 +133,251 @@ export default function AppointmentPage() {
   const handleNextMonth = () => setCurrentMonth(currentMonth.add(1, "month"));
 
   return (
-    <div className="docapp">
-      <div className="appointment-wrapper">
-        <div className="appointment-container">
-          <div className="appointment-content">
-            <div className="title">New appointment</div>
-            <div className="steps">
-              <span className={step === "datetime" ? "active" : ""}>Date</span>
-              <span className={step === "service" ? "active" : ""}>Service</span>
-              <span className={step === "doctor" ? "active" : ""}>
-                Doctor & Time
-              </span>
-              <span className={step === "overview" ? "active" : ""}>Overview</span>
-            </div>
+    <>
+      <Navbar />
+      <div className="docapp">
+        <div className="appointment-wrapper">
+          <div className="appointment-container">
+            <div className="appointment-content">
+              <div className="title">New appointment</div>
+              <div className="steps">
+                <span className={step === "datetime" ? "active" : ""}>
+                  Date
+                </span>
+                <span className={step === "service" ? "active" : ""}>
+                  Service
+                </span>
+                <span className={step === "doctor" ? "active" : ""}>
+                  Doctor & Time
+                </span>
+                <span className={step === "overview" ? "active" : ""}>
+                  Overview
+                </span>
+              </div>
 
-            {step === "datetime" && (
-              <>
-                <div className="month-nav">
-                  <button onClick={handlePrevMonth}>&lt;</button>
-                  <span>{currentMonth.format("MMMM YYYY")}</span>
-                  <button onClick={handleNextMonth}>&gt;</button>
-                </div>
-                <div className="calendar-header">
-                  {["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"].map((d) => (
-                    <span key={d}>{d}</span>
-                  ))}
-                </div>
-                <div className="calendar-grid">
-                  {calendarDays.map((date, idx) => (
-                    <button
-                      key={idx}
-                      className={`calendar-cell ${
-                        date
-                          ? selectedDate === date.format("YYYY-MM-DD")
-                            ? "selected-date"
-                            : ""
-                          : "empty"
-                      }`}
-                      onClick={() =>
-                        date && setSelectedDate(date.format("YYYY-MM-DD"))
-                      }
-                      disabled={!date}
-                    >
-                      {date ? date.date() : ""}
-                    </button>
-                  ))}
-                </div>
-                <button
-                  className="btn-continue"
-                  onClick={() => setStep("service")}
-                >
-                  CONTINUE
-                </button>
-              </>
-            )}
-
-            {step === "service" && (
-              <>
-                <div className="section-label">Select a service</div>
-                <div className="service-list">
-                  {services.map((service) => (
-                    <button
-                      key={service.id}
-                      className={`service-button ${
-                        selectedService?.id === service.id
-                          ? "selected-service"
-                          : ""
-                      }`}
-                      onClick={() => setSelectedService(service)}
-                    >
-                      {service.service_type}
-                    </button>
-                  ))}
-                </div>
-                <div className="nav-buttons">
-                  <button className="btn-back" onClick={() => setStep("datetime")}>
-                    Back
-                  </button>
-                  <button className="btn-continue" onClick={() => setStep("doctor")}>
-                    CONTINUE
-                  </button>
-                </div>
-              </>
-            )}
-            {step === "doctor" && (
-              <>
-                <div className="section-label">Select a doctor</div>
-                <div className="service-list">
-                  {doctors.map((doctor) => (
-                    <button
-                      key={doctor.id}
-                      className={`service-button ${
-                        selectedDoctor === doctor.name ? "selected-service" : ""
-                      }`}
-                      onClick={() => setSelectedDoctor(doctor.name)}
-                    >
-                      {doctor.name}
-                    </button>
-                  ))}
-                </div>
-
-                <div className="section-label" style={{ marginTop: "1rem" }}>
-                  Select available time
-                </div>
-                <div className="times-scroll">
-                  {availableTimes.length > 0 ? (
-                    availableTimes.map((time) => (
+              {step === "datetime" && (
+                <>
+                  <div className="month-nav">
+                    <button onClick={handlePrevMonth}>&lt;</button>
+                    <span>{currentMonth.format("MMMM YYYY")}</span>
+                    <button onClick={handleNextMonth}>&gt;</button>
+                  </div>
+                  <div className="calendar-header">
+                    {["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"].map(
+                      (d) => (
+                        <span key={d}>{d}</span>
+                      )
+                    )}
+                  </div>
+                  <div className="calendar-grid">
+                    {calendarDays.map((date, idx) => (
                       <button
-                        key={time}
-                        className={`time-button ${
-                          selectedTime === time ? "selected-time" : ""
+                        key={idx}
+                        className={`calendar-cell ${
+                          date
+                            ? selectedDate === date.format("YYYY-MM-DD")
+                              ? "selected-date"
+                              : ""
+                            : "empty"
                         }`}
-                        onClick={() => setSelectedTime(time)}
+                        onClick={() =>
+                          date && setSelectedDate(date.format("YYYY-MM-DD"))
+                        }
+                        disabled={!date}
                       >
-                        {time}
+                        {date ? date.date() : ""}
                       </button>
-                    ))
-                  ) : (
-                    <p>No available times for selected doctor on this date.</p>
-                  )}
-                </div>
-                <div className="nav-buttons">
-                  <button className="btn-back" onClick={() => setStep("service")}>
-                    Back
-                  </button>
+                    ))}
+                  </div>
+                  <div className="nav-buttons">
+                    <button
+                      className="btn-back"
+                      onClick={() => navigate("/")}
+                    >
+                      Back
+                    </button>
                   <button
                     className="btn-continue"
-                    disabled={!selectedTime}
-                    onClick={() => setStep("overview")}
+                    onClick={() => setStep("service")}
                   >
                     CONTINUE
                   </button>
-                </div>
-              </>
-            )}
+                  </div>
+                </>
+              )}
 
-            {step === "overview" && (
-              <>
-                <div className="section-label">Review your appointment</div>
-                <div className="overview-box">
-                  <p>
-                    <strong>Date:</strong>{" "}
-                    {dayjs(selectedDate).format("dddd, MMMM D, YYYY")}
-                  </p>
-                  <p>
-                    <strong>Time:</strong> {selectedTime}
-                  </p>
-                  <p>
-                    <strong>Service:</strong> {selectedService?.service_type}
-                  </p>
-                  <p>
-                    <strong>Doctor:</strong> {selectedDoctor}
-                  </p>
-                </div>
-                <div className="nav-buttons">
-                  <button className="btn-back" onClick={() => setStep("doctor")}>
-                    Back
-                  </button>
-                  <button
-                    className="btn-confirm"
-                    onClick={async () => {
-                      try {
-                        const appointmentDate = selectedDate;
-                        const appointmentTimeStart =
-                          selectedTime.split(" - ")[0];
+              {step === "service" && (
+                <>
+                  <div className="section-label">Select a service</div>
+                  <div className="service-list">
+                    {services.map((service) => (
+                      <button
+                        key={service.id}
+                        className={`service-button ${
+                          selectedService?.id === service.id
+                            ? "selected-service"
+                            : ""
+                        }`}
+                        onClick={() => setSelectedService(service)}
+                      >
+                        {service.service_type}
+                      </button>
+                    ))}
+                  </div>
+                  <div className="nav-buttons">
+                    <button
+                      className="btn-back"
+                      onClick={() => setStep("datetime")}
+                    >
+                      Back
+                    </button>
+                    <button
+                      className="btn-continue"
+                      onClick={() => setStep("doctor")}
+                    >
+                      CONTINUE
+                    </button>
+                  </div>
+                </>
+              )}
+              {step === "doctor" && (
+                <>
+                  <div className="section-label">Select a doctor</div>
+                  <div className="service-list">
+                    {doctors.map((doctor) => (
+                      <button
+                        key={doctor.id}
+                        className={`service-button ${
+                          selectedDoctor === doctor.name
+                            ? "selected-service"
+                            : ""
+                        }`}
+                        onClick={() => setSelectedDoctor(doctor.name)}
+                      >
+                        {doctor.name}
+                      </button>
+                    ))}
+                  </div>
 
-                        // หา doctorId จากชื่อหมอ
-                        const doctorObj = doctors.find(
-                          (d) => d.name === selectedDoctor
-                        );
-                        const doctorId = doctorObj?.id || 0;
+                  <div className="section-label" style={{ marginTop: "1rem" }}>
+                    Select available time
+                  </div>
+                  <div className="times-scroll">
+                    {availableTimes.length > 0 ? (
+                      availableTimes.map((time) => (
+                        <button
+                          key={time}
+                          className={`time-button ${
+                            selectedTime === time ? "selected-time" : ""
+                          }`}
+                          onClick={() => setSelectedTime(time)}
+                        >
+                          {time}
+                        </button>
+                      ))
+                    ) : (
+                      <p>
+                        No available times for selected doctor on this date.
+                      </p>
+                    )}
+                  </div>
+                  <div className="nav-buttons">
+                    <button
+                      className="btn-back"
+                      onClick={() => setStep("service")}
+                    >
+                      Back
+                    </button>
+                    <button
+                      className="btn-continue"
+                      disabled={!selectedTime}
+                      onClick={() => setStep("overview")}
+                    >
+                      CONTINUE
+                    </button>
+                  </div>
+                </>
+              )}
 
-                        const payload = {
-                          appointment_date: appointmentDate,
-                          appointment_time: appointmentTimeStart + ":00",
-                          user_id: parseInt(userId),
-                          servicetype_id: selectedService?.id,
-                          status_id: 1,
-                          doctor_id: doctorId,
-                          doctor_name: selectedDoctor,
-                          service_name: selectedService?.service_type,
-                        };
+              {step === "overview" && (
+                <>
+                  <div className="section-label">Review your appointment</div>
+                  <div className="overview-box">
+                    <p>
+                      <strong>Date:</strong>{" "}
+                      {dayjs(selectedDate).format("dddd, MMMM D, YYYY")}
+                    </p>
+                    <p>
+                      <strong>Time:</strong> {selectedTime}
+                    </p>
+                    <p>
+                      <strong>Service:</strong> {selectedService?.service_type}
+                    </p>
+                    <p>
+                      <strong>Doctor:</strong> {selectedDoctor}
+                    </p>
+                  </div>
+                  <div className="nav-buttons">
+                    <button
+                      className="btn-back"
+                      onClick={() => setStep("doctor")}
+                    >
+                      Back
+                    </button>
+                    <button
+                      className="btn-confirm"
+                      onClick={async () => {
+                        try {
+                          const appointmentDate = selectedDate;
+                          const appointmentTimeStart =
+                            selectedTime.split(" - ")[0];
 
-                        const data = await createAppointment(payload);
-                        const appointmentId = data.id;
+                          // หา doctorId จากชื่อหมอ
+                          const doctorObj = doctors.find(
+                            (d) => d.name === selectedDoctor
+                          );
+                          const doctorId = doctorObj?.id || 0;
 
-                        alert("Appointment confirmed!");
+                          const payload = {
+                            appointment_date: appointmentDate,
+                            appointment_time: appointmentTimeStart + ":00",
+                            user_id: parseInt(userId),
+                            servicetype_id: selectedService?.id,
+                            status_id: 1,
+                            doctor_id: doctorId,
+                            doctor_name: selectedDoctor,
+                            service_name: selectedService?.service_type,
+                          };
 
-                        navigate("/my-appointments", {
-                          state: {
-                            id: appointmentId,
-                            userId: userId,
-                            date: appointmentDate,
-                            time: selectedTime,
-                            service: selectedService?.service_type,
-                            doctor: selectedDoctor,
-                          },
-                        });
-                      } catch (error: any) {
-                        alert("Error: " + error.message);
-                      }
-                    }}
-                  >
-                    CONFIRM
-                  </button>
-                </div>
-              </>
-            )}
+                          const data = await createAppointment(payload);
+                          const appointmentId = data.id;
+
+                          alert("Appointment confirmed!");
+
+                          navigate("/my-appointments", {
+                            state: {
+                              id: appointmentId,
+                              userId: userId,
+                              date: appointmentDate,
+                              time: selectedTime,
+                              service: selectedService?.service_type,
+                              doctor: selectedDoctor,
+                            },
+                          });
+                        } catch (error: any) {
+                          alert("Error: " + error.message);
+                        }
+                      }}
+                    >
+                      CONFIRM
+                    </button>
+                  </div>
+                </>
+              )}
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }

@@ -129,7 +129,7 @@ def delete_doctor(doctor_id):
     
 # ------------------------------------
 # Get All Genders
-@app.route("/api/genders/", methods=["GET"])
+@app.route("/api/doctor-genders/", methods=["GET"])
 def get_genders():
     try:
         genders = Gender.query.order_by(Gender.id.asc()).all()

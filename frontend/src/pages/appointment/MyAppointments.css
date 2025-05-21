@@ -87,3 +87,19 @@
   width: 100px;
   height: auto;
 }
+
+.nav-buttons {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+.btn-back {
+    font-size: 1.2rem;
+    color: #1d3e45;
+    padding: 0.5rem 1rem;
+    display: inline-block;    /* เป็นบล็อกอินไลน์ ให้จัดเรียงข้างกันได้ */
+    width: max-content;
+    margin-right: 1.5rem;     /* เว้นระยะขวาจากปุ่ม Continue */
+    vertical-align: middle;   /* จัดให้ข้อความอยู่กึ่งกลางแนวตั้ง */
+}
