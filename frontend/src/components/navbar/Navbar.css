@@ -43,7 +43,7 @@
 
 .nav-button:hover {
   background-color: #2f3f44;
-  scale: 1.0
+  scale: 1.1
 }
 
 .nav-right {
@@ -53,8 +53,8 @@
 }
 
 .nav-user-icon {
-  height: 36px;
-  width: 36px;
+  height: 42px;
+  width: 42px;
   border-radius: 50%;
   background-color: white;
   padding: 4px;

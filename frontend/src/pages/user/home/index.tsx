@@ -4,7 +4,7 @@ import "./Home.css";
 import Slide1 from "../../../assets/slide1.png";
 import Slide2 from "../../../assets/slide2.png";
 import iapp from "../../../assets/iapp.png"; 
-import appointment from "../../../assets/appointment.PNG";
+import appointment from "../../../assets/appointment.png";
 import doctor from "../../../assets/doctorg.png"; 
 
 import { useEffect, useState } from "react";
@@ -29,21 +29,6 @@ const Home = () => {
     title: "Free Oral Health Checkup",
     description: "Free for the first 100 people who register in advance",
   },
-  // {
-  //   image: "/images/banner3.png",
-  //   title: "โปรโมชั่นจัดฟัน",
-  //   description: "จ่ายมัดจำเพียง 999 บาท เริ่มจัดฟันได้ทันที",
-  // },
-  // {
-  //   image: "/images/banner4.png",
-  //   title: "โปรฟันน้ำนม",
-  //   description: "พิเศษสำหรับเด็ก 3-12 ปี ลดทันที 30%",
-  // },
-  // {
-  //   image: "/images/banner5.png",
-  //   title: "แคมเปญคนรักฟัน",
-  //   description: "แนะนำเพื่อนมารักษา รับส่วนลดทั้งคู่!",
-  // },
 ];
 
 
