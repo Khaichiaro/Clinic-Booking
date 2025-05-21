@@ -9,36 +9,36 @@ pipeline {
 
 
   stages {
-    stage('Checkout Code') {
+    stage('======= Checkout Code =======') {
       steps {
-        echo '🔄 Checking out code...'
+        echo '======= Checking out code... ======='
         dir('Clinic-Booking') {
             checkout scm
         }
       }
     }
 
-    stage('Clean up existing containers') {
+    stage('======= Clean up existing containers =======') {
       steps {
-        echo '🧹 Stopping old containers...'
+        echo '======= Stopping old containers... ======='
         dir('Clinic-Booking') {
           sh "docker compose -f $COMPOSE_FILE down -v $TARGET_SERVICES"
         }
-        echo '🧽 Pruning unused Docker data...'
+        echo '======= Pruning unused Docker data... ======='
         sh "docker system prune -a -f"
       }
     }
 
-    stage('Build and Run containers') {
+    stage('======= Build and Run containers' =======) {
       steps {
-        echo '🚀 Starting containers...'
+        echo '======= Starting containers... ======='
         dir('Clinic-Booking') {
             sh "docker compose -f $COMPOSE_FILE up -d $TARGET_SERVICES"
         }
       }
     }
 
-    stage('🧪 Debug Status') {
+    stage('======= Debug Status' =======) {
       steps {
         sh 'docker ps -a'
         sh 'docker logs frontend || true'
